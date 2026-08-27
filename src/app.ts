@@ -13,7 +13,7 @@ app.use(express.json());
 
 // setup routes
 app.use("/api-docs", swaggerRoute);
-app.use("/health", healthRoute);
+app.use("/api/health", healthRoute);
 
 
 app.use(globalErrorHandler);
