@@ -3,4 +3,4 @@ export * from "./verifications.schema";
 export * from "./payments.schema";
 export * from "./rag.schema";
 export * from "./investigations.schema";
-// export * from "./relations/relations"; // TODO: uncomment when using relational queries frequently
+export * from "./relations/index";
