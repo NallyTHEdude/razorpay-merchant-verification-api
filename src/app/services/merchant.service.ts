@@ -6,12 +6,12 @@ import {
 import { ApiError } from "@/utils/errors/ApiError";
 import { StatusCodes } from "http-status-codes";
 import {
-  createMerchant,
-  deleteMerchantById,
   getAllMerchants,
-  getMerchantByGstNumber,
   getMerchantById,
+  getMerchantByGstNumber,
+  createMerchant,
   updateMerchant,
+  deleteMerchantById,
 } from "../repositories/merchant.repository";
 
 export const getAll = async (): Promise<Merchant[]> => {
@@ -24,7 +24,7 @@ export const getById = async (id: string): Promise<Merchant> => {
   if (!merchant) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      `Merchant with ${id} does not exist`,
+      `Merchant with id: ${id} does not exist`,
     );
   }
   return merchant;
@@ -35,26 +35,22 @@ export const getByGstNumber = async (gstNumber: string): Promise<Merchant> => {
   if (!merchant) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      `Merchant with GST number ${gstNumber} does not exist`,
+      `Merchant with GST number: ${gstNumber} does not exist`,
     );
   }
   return merchant;
 };
 
-export const create = async (
-  merchantData: CreateMerchantDto,
-): Promise<Merchant> => {
-  const existingMerchant: Merchant | null = await getMerchantByGstNumber(
-    merchantData.gstNumber,
-  );
+export const create = async (merchantData: CreateMerchantDto): Promise<Merchant> => {
+  const existingMerchant: Merchant | null = await getMerchantByGstNumber(merchantData.gstNumber);
   if (existingMerchant) {
     throw new ApiError(
       StatusCodes.CONFLICT,
-      `Merchant with GST number ${merchantData.gstNumber} already exists`,
+      `Merchant with GST number: ${merchantData.gstNumber} already exists`,
     );
   }
 
-  const newMerchant: Merchant = await createMerchant(merchantData);
+  const newMerchant: Merchant | null = await createMerchant(merchantData);
   if (!newMerchant) {
     throw new ApiError(
       StatusCodes.INTERNAL_SERVER_ERROR,
@@ -64,20 +60,15 @@ export const create = async (
   return newMerchant;
 };
 
-export const update = async (
-  id: string,
-  newMerchantData: UpdateMerchantDto,
-): Promise<Merchant> => {
-  const updatedMerchant: Merchant | null = await updateMerchant(
-    id,
-    newMerchantData,
-  );
+export const update = async (id: string, newMerchantData: UpdateMerchantDto): Promise<Merchant> => {
+  const updatedMerchant: Merchant | null = await updateMerchant(id, newMerchantData);
   if (!updatedMerchant) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      `Merchant with ${id} does not exist`,
+      `Merchant with id: ${id} does not exist`,
     );
   }
+
   return updatedMerchant;
 };
 
@@ -86,7 +77,7 @@ export const deleteById = async (id: string): Promise<Merchant> => {
   if (!deletedMerchant) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      `Merchant with ${id} does not exist`,
+      `Merchant with id: ${id} does not exist`,
     );
   }
   return deletedMerchant;
