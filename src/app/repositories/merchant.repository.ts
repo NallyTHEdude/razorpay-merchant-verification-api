@@ -5,9 +5,7 @@ import {
 } from "@/data/types/Merchant";
 import { db } from "@/db";
 import { merchants as merchantTable } from "@/db/schemas/merchants.schema";
-import { ApiError } from "@/utils/errors/ApiError";
 import { eq } from "drizzle-orm"; 
-import { StatusCodes } from "http-status-codes/build/cjs/status-codes";
 
 export const getAllMerchants = async (): Promise<Merchant[]> => {
     return db.select().from(merchantTable);
@@ -52,6 +50,6 @@ export const deleteMerchantById = async (id: string): Promise<Merchant | null> =
     const [deletedMerchant] = await db.delete(merchantTable)
     .where(eq(merchantTable.id, id))
     .returning();
-    
+
     return deletedMerchant ?? null;
 };
