@@ -11,7 +11,16 @@ export const createMerchantValidator = [
     .withMessage("GST number is required")
     .matches(GST_REGEX)
     .withMessage("Invalid GST number format"),
-  body("websiteUrl").optional().isURL().withMessage("Invalid website URL"),
+  body("websiteUrl")
+    .trim()
+    .notEmpty()
+    .withMessage("Website URL is required")
+    .isURL({
+      require_tld: false,
+      protocols: ["http", "https"],
+      require_protocol: true,
+    })
+    .withMessage("Invalid website URL"),
   body("phoneNumber")
     .trim()
     .notEmpty()
