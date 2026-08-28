@@ -16,8 +16,27 @@ const router = Router();
  *      responses:
  *          200:
  *            description: Health status of the API
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  $ref: '#/components/schemas/HealthResponse'
+ *                example:
+ *                  statusCode: 200
+ *                  data: {}
+ *                  message: Health check successful
+ *                  success: true
  *          503:
  *            description: Service Unavailable - One or more external services are not healthy
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  $ref: '#/components/schemas/ErrorResponse'
+ *                example:
+ *                  success: false
+ *                  message: Health check failed
+ *                  errors:
+ *                    - message: Service Database is not healthy
+ *                  data: null
  */
 router.get("/", healthCheck);
 
