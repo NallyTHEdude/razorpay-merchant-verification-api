@@ -24,6 +24,22 @@ const options: swaggerJsdoc.Options = {
             {
                 name: "Merchant Endpoints",
                 description: "Endpoints related to merchant management."
+            },
+            {
+                name: "Payment Endpoints",
+                description: "Endpoints related to payment management."
+            },
+            {
+                name: "Verification Endpoints",
+                description: "Endpoints related to verification management."
+            },
+            {
+                name: "Investigation Endpoints",
+                description: "Endpoints related to investigation management."
+            },
+            {
+                name: "Rag Endpoints",
+                description: "Endpoints related to RAG (Retrieval Augmented Generation)."
             }
         ],
         servers: [
