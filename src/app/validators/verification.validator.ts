@@ -1,4 +1,4 @@
-import {body, param, query} from 'express-validator';
+import {param} from 'express-validator';
 
 // TODO: SETUP PAGINATION AFTER MVP
 // export const getAllVerificationsValidator = [
