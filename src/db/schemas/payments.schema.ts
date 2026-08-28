@@ -4,9 +4,9 @@ import { PaymentStatus, PaymentMethod } from "@/data/enums/db.enums";
 
 import { merchants } from "./merchants.schema";
 
-const paymentStatusEnum = pgEnum("payment_status", Object.values(PaymentStatus) as [string, ...string[]]);
-const paymentMethodEnum = pgEnum("payment_method", Object.values(PaymentMethod) as [string, ...string[]]);
-
+export const paymentStatusEnum = pgEnum("payment_status", Object.values(PaymentStatus) as [string, ...string[]]);
+export const paymentMethodEnum = pgEnum("payment_method", Object.values(PaymentMethod) as [string, ...string[]]);
+  
 export const payments = pgTable("payments", {
     id: uuid("id").defaultRandom().primaryKey(),
 

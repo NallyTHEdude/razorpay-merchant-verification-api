@@ -9,7 +9,7 @@ import { pgEnum } from "drizzle-orm/pg-core";
 import { Category } from "@/data/enums/db.enums";
 
 // setting enums required by this schema
-const categoryEnum = pgEnum("category", Object.values(Category) as [string, ...string[]]);
+export const categoryEnum = pgEnum("category", Object.values(Category) as [string, ...string[]]);
 
 // setting the schema using converted enums
 export const merchants = pgTable("merchants", {
