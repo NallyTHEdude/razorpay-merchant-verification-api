@@ -1,5 +1,10 @@
 import express from "express";
+import { serve } from "inngest/express";
 import { globalErrorHandler } from "@/utils/errors/globalErrorHandler";
+
+import { inngestClient } from "@/config/pipeline/client";
+import { helloWorldFunction } from "./config/pipeline/functions";
+
 
 //import routes
 import { swaggerRouter } from "@/config";
@@ -10,7 +15,12 @@ import verificationRoute from "@/app/routes/verification.route";
 const app = express();
 
 app.use(express.json());
-
+app.use("/api/inngest", serve({
+    client: inngestClient,
+    functions: [
+        helloWorldFunction
+    ]
+}))
 
 
 // setup routes
