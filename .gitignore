@@ -69,3 +69,57 @@ Thumbs.db
 .cache/
 .tmp/
 tmp/
+
+# Generated .gitignore file for: Node, TypeScript, Express, VSCode, JetBrains, Windows, macOS, Linux, npm, Yarn, PostgreSQL, Docker, GitHub Actions
+# Created with FOSSA's DevOps Tools
+
+# Node
+npm-debug.log
+yarn-error.log
+
+# TypeScript
+# Add TypeScript-specific ignores here
+
+# Express
+# Add Express-specific ignores here
+
+# VSCode
+
+# JetBrains
+# Add JetBrains-specific ignores here
+
+# Windows
+# Add Windows-specific ignores here
+
+# macOS
+# Add macOS-specific ignores here
+
+# Linux
+# Add Linux-specific ignores here
+
+# npm
+# Add npm-specific ignores here
+
+# Yarn
+# Add Yarn-specific ignores here
+
+# PostgreSQL
+# Add PostgreSQL-specific ignores here
+
+# Docker
+docker-compose.override.yml
+Dockerfile.override
+.dockerignore
+
+# GitHub Actions
+# Add GitHub Actions-specific ignores here
+
+# Common
+*.bak
+*.swp
+*~
+
+# IDE and editor generated files
+*.sublime-*
+
+# Local environment files
