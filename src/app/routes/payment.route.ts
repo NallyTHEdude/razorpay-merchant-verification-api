@@ -3,7 +3,12 @@ import {
     getAllPaymentsValidator,
     getPaymentByIdValidator,
     createPaymentValidator
-}
+} from "@/app/validators/payment.validator";
+import {
+    getAllPayments,
+    getPaymentById,
+    createPayment
+} from "@/app/controllers/payment.controller";
 
 const router = Router();
 
