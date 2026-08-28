@@ -2,7 +2,7 @@ import express from "express";
 import { globalErrorHandler } from "@/utils/errors/globalErrorHandler";
 
 //import routes
-import swaggerRoute from "@/config/docs/swagger";
+import { swaggerRouter } from "@/config";
 import healthRoute from "@/app/routes/health.route";
 import merchantRoute from "@/app/routes/merchant.route";
 
@@ -13,7 +13,7 @@ app.use(express.json());
 
 
 // setup routes
-app.use("/api-docs", swaggerRoute);
+app.use("/api-docs", swaggerRouter);
 app.use("/api/health", healthRoute);
 app.use("/api/merchants", merchantRoute);
 
