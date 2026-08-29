@@ -3,6 +3,7 @@ import {
     getAllVerifications,
     getByVerificationId
 } from "@/app/repositories/verification.repository";
+import { getAllPayments } from "@/app/repositories/payment.repository";
 import {
     getMerchantById
 } from "@/app/repositories/merchant.repository";
@@ -43,7 +44,7 @@ export const getById = async (merchantId: string, verificationId: string): Promi
     return verification;
 }
 
-
+// create calls the inngest trigger to start pipeline
 export const create = async (createVerificationDto: { merchantId: string }): Promise<Verification> => {
     const merchant: Merchant | null = await getMerchantById(createVerificationDto.merchantId);
     if (!merchant) {
@@ -52,7 +53,8 @@ export const create = async (createVerificationDto: { merchantId: string }): Pro
             `Merchant with id: ${createVerificationDto.merchantId} does not exist`,
         )
     }
-    // dummy data for now
+
+    // upload dummy data first
     const dummyVerificationData: NewVerification | null = {
         merchantId: createVerificationDto.merchantId,
         verificationStatus: VerificationStatus.PENDING,
@@ -63,23 +65,26 @@ export const create = async (createVerificationDto: { merchantId: string }): Pro
         trustscore: 0,
         createdAt: new Date(),
     };
-
-    const createdVerification: Verification | null = await createVerification(dummyVerificationData);
-    if (!createdVerification) {
+    const createdVerificationData: Verification | null = await createVerification(dummyVerificationData);
+    if (!createdVerificationData) {
         throw new ApiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Failed to create verification for merchant with id: ${createVerificationDto.merchantId}`,
         )
     }
 
+    // TODO: do not fetch all payments, fetch most recent 100 payments in production, this is just for testing purposes
+    const merchantPayments = await getAllPayments(createVerificationDto.merchantId);
+
     // trigger the verification pipeline using Inngest
     inngestClient.send({
       name: "verification/created",
       data: {
-        merchantId: createVerificationDto.merchantId,
-        verificationId: createdVerification.id,
+        merchant: merchant,
+        verification: createdVerificationData,
+        recentPayments: merchantPayments
       },
     });
 
-    return createdVerification;
+    return createdVerificationData;
 };
