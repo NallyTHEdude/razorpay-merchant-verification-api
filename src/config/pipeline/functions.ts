@@ -1,4 +1,8 @@
 import { inngestClient } from "./client";
+import { verifyPhoneNumber } from "@/app/verification-pipeline/stages/phone-number/phoneNumber.verification";
+import { gstNumberVerification } from "@/app/verification-pipeline/stages/gst-number/gstNumber.verification";
+import { logRegPrediction } from "@/app/verification-pipeline/stages/ml-prediction/logisticRegression";
+import { fetchWebstiteData } from "@/app/verification-pipeline/stages/website/website.verification";
 
 export const merchantPipeline = inngestClient.createFunction(
   {
@@ -10,40 +14,47 @@ export const merchantPipeline = inngestClient.createFunction(
     ],
   },
 
-  // TODO: Implement the actual verification logic for each step in the pipeline
+
   async ({ event, step }) => {
-    const { merchantId, verificationId } = event.data;
+    const { merchant, verification, recentPayments } = event.data;
 
     await step.run("start-verification", async () => {
       console.log(
-        `Starting verification ${verificationId} for merchant ${merchantId}`,
+        `Starting verification ${verification.id} for merchant ${merchant.id}`,
       );
     });
 
-    await step.run("verify-phone-number", async () => {
-      console.log(`Verifying phone for merchant ${merchantId}`);
+    const isPhoneNumberVerified = await step.run("verify-phone-number", async () => {
+      console.log(`Verifying phone number for merchant ${merchant.id}`);
+      return await verifyPhoneNumber(merchant.phoneNumber);
     });
 
-    await step.run("verify-gst-number", async () => {
-      console.log(`Verifying GST for merchant ${merchantId}`);
+    const isGstNumberVerified = await step.run("verify-gst-number", async () => {
+      console.log(`Verifying GST for merchant ${merchant.id}`);
+      return await gstNumberVerification(merchant.gstNumber);
     });
 
-    await step.run("verify-website", async () => {
-      console.log(`Verifying website for merchant ${merchantId}`);
+    // TODO: Implement the actual website verification logic
+    const {websiteData, isWebsiteVerified} = await step.run("verify-website", async () => {
+      console.log(`Verifying website and getting data for merchant ${merchant.id}`);
+      return await fetchWebstiteData(merchant.websiteUrl);
     });
 
-    await step.run("run-ml-prediction", async () => {
-      console.log(`Running ML prediction for merchant ${merchantId}`);
+    const mlPredictionData = await step.run("run-ml-prediction", async () => {
+      console.log(`Running ML prediction for merchant ${merchant.id}`);
+      return await logRegPrediction(recentPayments, {isGstNumberVerified, isPhoneNumberVerified, isWebsiteVerified});
     });
 
-    await step.run("complete-verification", async () => {
-      console.log(`Verification ${verificationId} completed`);
+    const result = await step.run("combine-results", async () => {
+      return {
+        isPhoneNumberVerified,
+        isGstNumberVerified,
+        isWebsiteVerified,
+        mlPredictionData,
+        websiteData,
+      }
     });
 
-    return {
-      merchantId,
-      verificationId,
-      status: "COMPLETED",
-    };
+    return result;
   },
 );
