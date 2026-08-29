@@ -11,7 +11,7 @@ import { Merchant } from "@/data/types/Merchant";
 import { StatusCodes } from "http-status-codes/build/cjs/status-codes";
 import { ApiError } from "@/utils/errors/ApiError";
 import { NewVerification, Verification } from "@/data/types/Verification";
-
+import { inngestClient } from "@/config";
 
 export const getAll = async (merchantId: string): Promise<Verification[]> => {
     const merchant: Merchant | null = await getMerchantById(merchantId);
@@ -43,7 +43,7 @@ export const getById = async (merchantId: string, verificationId: string): Promi
     return verification;
 }
 
-// TODO: implement inngest pipeline for verification
+
 export const create = async (createVerificationDto: { merchantId: string }): Promise<Verification> => {
     const merchant: Merchant | null = await getMerchantById(createVerificationDto.merchantId);
     if (!merchant) {
@@ -71,5 +71,15 @@ export const create = async (createVerificationDto: { merchantId: string }): Pro
             `Failed to create verification for merchant with id: ${createVerificationDto.merchantId}`,
         )
     }
+
+    // trigger the verification pipeline using Inngest
+    inngestClient.send({
+      name: "verification/created",
+      data: {
+        merchantId: createVerificationDto.merchantId,
+        verificationId: createdVerification.id,
+      },
+    });
+
     return createdVerification;
 };

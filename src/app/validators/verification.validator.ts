@@ -1,25 +1,26 @@
-import { body, param } from "express-validator";
+import { param } from "express-validator";
 
-export const createPaymentsValidator = [
+export const createVerificationValidator = [
     param("merchantId")
         .trim()
         .notEmpty()
         .withMessage("Merchant ID is required")
         .isUUID()
         .withMessage("Invalid merchant ID"),
-    body()
-        .isArray({ min: 1 })    
-        .withMessage("Payments must be a non-empty array"),
-    body("*.amount")
-        .trim()
-        .notEmpty()
-        .withMessage("Payment amount is required"),
-    body("*.status")
-        .trim()
-        .notEmpty()
-        .withMessage("Payment status is required"),
-    body("*.paymentMethod")
-        .trim()
-        .notEmpty()
-        .withMessage("Payment method is required"),
 ];
+
+export const getVerificationByIdValidator = [
+    param("merchantId")
+        .trim()
+        .notEmpty()
+        .withMessage("Merchant ID is required")
+        .isUUID()
+        .withMessage("Invalid merchant ID"),
+    param("verificationId")
+        .trim()
+        .notEmpty()
+        .withMessage("Verification ID is required")
+        .isUUID()
+        .withMessage("Invalid verification ID"),
+];
+
