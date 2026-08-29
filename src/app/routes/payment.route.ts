@@ -4,6 +4,7 @@ import {
     getPaymentByIdValidator,
     createPaymentValidator
 } from "@/app/validators/payment.validator";
+import { validate } from "@/app/middlewares/validate.middleware";
 import {
     getAllPayments,
     getPaymentById,
@@ -12,8 +13,8 @@ import {
 
 const router = Router();
 
-router.get(":merchantId", getAllPaymentsValidator, getAllPayments);
-router.get("/:merchantId/:paymentId", getPaymentByIdValidator, getPaymentById);
-router.post("/:merchantId", createPaymentValidator, createPayments);
+router.get("/:merchantId", validate(getAllPaymentsValidator), getAllPayments);
+router.get("/:merchantId/:paymentId", validate(getPaymentByIdValidator), getPaymentById);
+router.post("/:merchantId", validate(createPaymentValidator), createPayments);
 
 export default router;
