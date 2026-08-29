@@ -7,13 +7,13 @@ import {
 import {
     getAllPayments,
     getPaymentById,
-    createPayment
+    createPayments
 } from "@/app/controllers/payment.controller";
 
 const router = Router();
 
 router.get(":merchantId", getAllPaymentsValidator, getAllPayments);
 router.get("/:merchantId/:paymentId", getPaymentByIdValidator, getPaymentById);
-router.post("/:merchantId", createPaymentValidator, createPayment);
+router.post("/:merchantId", createPaymentValidator, createPayments);
 
 export default router;
