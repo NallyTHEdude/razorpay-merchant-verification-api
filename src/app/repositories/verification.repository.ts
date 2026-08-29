@@ -23,3 +23,16 @@ export const getByVerificationId = async (merchantId: string, verificationId: st
     .limit(1);
     return verification ?? null;
 };
+
+export const updateVerificationById = async (merchantId: string, verificationId: string, updateData: Partial<NewVerification>): Promise<Verification | null> => {
+    const [updatedVerification] = await db.update(verificationTable)
+    .set(updateData)
+    .where(
+        and(
+            eq(verificationTable.merchantId, merchantId),
+            eq(verificationTable.id, verificationId)
+        )
+    )
+    .returning();
+    return updatedVerification ?? null;
+}
