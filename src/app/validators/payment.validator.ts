@@ -1,5 +1,5 @@
 import { body, param } from "express-validator";
-import { PaymentStatus } from "@/data/enums/db.enums";
+import { PaymentStatus, PaymentMethod } from "@/data/enums/db.enums";
 
 export const getAllPaymentsValidator = [
     param("merchantId")
@@ -47,5 +47,11 @@ export const createPaymentValidator = [
     body("*.paymentMethod")
         .trim()
         .notEmpty()
-        .withMessage("Payment method is required")
+        .isIn(Object.values(PaymentMethod))
+        .withMessage("Payment method is required"),
+    body("*.isInternational")
+        .exists()
+        .withMessage("isInternational field is required")
+        .isBoolean()
+        .withMessage("isInternational must be a boolean")
 ];

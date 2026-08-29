@@ -1,4 +1,4 @@
-import { decimal, index, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { decimal, index, pgTable, timestamp, uuid, boolean} from "drizzle-orm/pg-core";
 import { pgEnum } from "drizzle-orm/pg-core";
 import { PaymentStatus, PaymentMethod } from "@/data/enums/db.enums";
 
@@ -20,6 +20,8 @@ export const payments = pgTable("payments", {
     status: paymentStatusEnum("status").notNull(),
 
     paymentMethod: paymentMethodEnum("payment_method").notNull(),
+
+    isInternational: boolean("is_international").notNull(),
 
     createdAt: timestamp("created_at", {withTimezone: true}).defaultNow().notNull(),
   },

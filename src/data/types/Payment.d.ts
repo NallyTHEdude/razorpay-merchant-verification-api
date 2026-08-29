@@ -7,7 +7,7 @@ import { payments } from "@/db/schemas/payments.schema";
 import {
   PaymentStatus,
   PaymentMethod,
-} from "@/data/enums";
+} from "@/data/enums/db.enums";
 
 export type Payment = InferSelectModel<typeof payments>;
 
@@ -25,6 +25,7 @@ export interface CreatePaymentDto {
   amount: string;
   status: PaymentStatus;
   paymentMethod: PaymentMethod;
+  isInternational: boolean;
 }
 
 export type CreatePaymentRequest = Request<
