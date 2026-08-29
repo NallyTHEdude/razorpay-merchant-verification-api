@@ -2,9 +2,8 @@ import express from "express";
 import { serve } from "inngest/express";
 import { globalErrorHandler } from "@/utils/errors/globalErrorHandler";
 
-import { inngestClient } from "@/config/pipeline/client";
+import { inngestClient } from "@/config";
 import { merchantPipeline } from "./config/pipeline/functions";
-
 
 //import routes
 import { swaggerRouter } from "@/config";
