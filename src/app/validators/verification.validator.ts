@@ -1,43 +1,25 @@
-import {param} from 'express-validator';
+import { body, param } from "express-validator";
 
-// TODO: SETUP PAGINATION AFTER MVP
-// export const getAllVerificationsValidator = [
-//   param("merchantId")
-//     .trim()
-//     .notEmpty()
-//     .withMessage("Merchant ID is required"),
-
-//   query("page")
-//     .optional()
-//     .isInt({ min: 1 })
-//     .withMessage("Page must be a positive integer"),
-
-//   query("limit")
-//     .optional()
-//     .isInt({ min: 1, max: 100 })
-//     .withMessage("Limit must be between 1 and 100"),
-// ];
-
-export const createVerificationValidator = [
-  param("merchantId")
-    .trim()
-    .notEmpty()
-    .withMessage("Merchant ID is required")
-    .isUUID()
-    .withMessage("Invalid merchant ID"),
-];
-
-export const getVerificationByIdValidator = [
+export const createPaymentsValidator = [
     param("merchantId")
         .trim()
         .notEmpty()
         .withMessage("Merchant ID is required")
         .isUUID()
         .withMessage("Invalid merchant ID"),
-    param("verificationId")
+    body()
+        .isArray({ min: 1 })    
+        .withMessage("Payments must be a non-empty array"),
+    body("*.amount")
         .trim()
         .notEmpty()
-        .withMessage("Verification ID is required")
-        .isUUID()
-        .withMessage("Invalid verification ID"),
+        .withMessage("Payment amount is required"),
+    body("*.status")
+        .trim()
+        .notEmpty()
+        .withMessage("Payment status is required"),
+    body("*.paymentMethod")
+        .trim()
+        .notEmpty()
+        .withMessage("Payment method is required"),
 ];
