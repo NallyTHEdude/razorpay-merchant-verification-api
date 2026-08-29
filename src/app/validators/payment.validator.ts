@@ -1,4 +1,5 @@
-import { param } from "express-validator";
+import { body, param } from "express-validator";
+import { PaymentStatus } from "@/data/enums/db.enums";
 
 export const getAllPaymentsValidator = [
     param("merchantId")
@@ -31,4 +32,20 @@ export const createPaymentValidator = [
         .withMessage("Merchant ID is required")
         .isUUID()
         .withMessage("Invalid merchant ID"),
+    body()
+        .isArray({ min: 1 })
+        .withMessage("Payments must be a non-empty array"),
+    body("*.amount")
+        .trim()
+        .notEmpty()
+        .withMessage("Payment amount is required"),
+    body("*.status")
+        .trim()
+        .notEmpty()
+        .isIn(Object.values(PaymentStatus))
+        .withMessage("Payment status is required"),
+    body("*.paymentMethod")
+        .trim()
+        .notEmpty()
+        .withMessage("Payment method is required")
 ];
