@@ -20,6 +20,15 @@ const verificationExample = {
   createdAt: "2026-08-29T10:35:00.000Z",
 };
 
+const paymentExample = {
+  id: "e7c24154-b56f-48dc-86a4-0c5edaa2a7ad",
+  merchantId: merchantExample.id,
+  amount: "1499.00",
+  status: "SUCCESS",
+  paymentMethod: "UPI",
+  createdAt: "2026-08-29T10:40:00.000Z",
+};
+
 export const apiErrorDetailSchema = {
   type: "object",
   properties: {
@@ -412,6 +421,133 @@ export const verificationListResponseSchema = {
   },
 };
 
+export const paymentStatusSchema = {
+  type: "string",
+  enum: ["SUCCESS", "REFUNDED", "CHARGEBACK"],
+};
+
+export const paymentMethodSchema = {
+  type: "string",
+  enum: ["CARD", "UPI", "NET_BANKING"],
+};
+
+export const paymentSchema = {
+  type: "object",
+  properties: {
+    id: {
+      type: "string",
+      format: "uuid",
+    },
+    merchantId: {
+      type: "string",
+      format: "uuid",
+    },
+    amount: {
+      type: "string",
+      example: "1499.00",
+      description: "Decimal amount stored with precision 12 and scale 2.",
+    },
+    status: {
+      $ref: "#/components/schemas/PaymentStatus",
+    },
+    paymentMethod: {
+      $ref: "#/components/schemas/PaymentMethod",
+    },
+    createdAt: {
+      type: "string",
+      format: "date-time",
+    },
+  },
+  required: ["id", "merchantId", "amount", "status", "paymentMethod", "createdAt"],
+  example: paymentExample,
+};
+
+export const createPaymentRequestSchema = {
+  type: "array",
+  minItems: 1,
+  items: {
+    type: "object",
+    properties: {
+      amount: {
+        type: "string",
+        minLength: 1,
+        example: "1499.00",
+      },
+      status: {
+        $ref: "#/components/schemas/PaymentStatus",
+      },
+      paymentMethod: {
+        $ref: "#/components/schemas/PaymentMethod",
+      },
+    },
+    required: ["amount", "status", "paymentMethod"],
+  },
+  example: [
+    {
+      amount: "1499.00",
+      status: "SUCCESS",
+      paymentMethod: "UPI",
+    },
+  ],
+};
+
+export const paymentResponseSchema = {
+  type: "object",
+  properties: {
+    statusCode: {
+      type: "integer",
+    },
+    data: {
+      $ref: "#/components/schemas/Payment",
+    },
+    message: {
+      type: "string",
+    },
+    success: {
+      type: "boolean",
+      example: true,
+    },
+  },
+  required: ["statusCode", "data", "message", "success"],
+  example: {
+    statusCode: 200,
+    data: paymentExample,
+    message: "Payment fetched successfully",
+    success: true,
+  },
+};
+
+export const paymentListResponseSchema = {
+  type: "object",
+  properties: {
+    statusCode: {
+      type: "integer",
+      example: 200,
+    },
+    data: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/Payment",
+      },
+    },
+    message: {
+      type: "string",
+      example: "Payments retrieved successfully",
+    },
+    success: {
+      type: "boolean",
+      example: true,
+    },
+  },
+  required: ["statusCode", "data", "message", "success"],
+  example: {
+    statusCode: 200,
+    data: [paymentExample],
+    message: "Payments retrieved successfully",
+    success: true,
+  },
+};
+
 export const componentSchemas = {
   ApiErrorDetail: apiErrorDetailSchema,
   ErrorResponse: errorResponseSchema,
@@ -425,4 +561,10 @@ export const componentSchemas = {
   Verification: verificationSchema,
   VerificationResponse: verificationResponseSchema,
   VerificationListResponse: verificationListResponseSchema,
+  Payment: paymentSchema,
+  PaymentStatus: paymentStatusSchema,
+  PaymentMethod: paymentMethodSchema,
+  CreatePaymentRequest: createPaymentRequestSchema,
+  PaymentResponse: paymentResponseSchema,
+  PaymentListResponse: paymentListResponseSchema,
 };

@@ -27,6 +27,10 @@ const options: swaggerJsdoc.Options = {
                 description: "Endpoints related to merchant management."
             },
             {
+                name: "Payment Endpoints",
+                description: "Endpoints related to payment management."
+            },
+            {
                 name: "Verification Endpoints",
                 description: "Endpoints related to verification management."
             }
@@ -45,6 +49,7 @@ const options: swaggerJsdoc.Options = {
     apis: [
         "./src/app/routes/health.route.ts",
         "./src/app/routes/merchant.route.ts",
+        "./src/app/routes/payment.route.ts",
         "./src/app/routes/verification.route.ts",
     ],
 }
