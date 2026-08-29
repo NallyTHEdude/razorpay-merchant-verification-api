@@ -10,6 +10,7 @@ export const merchantPipeline = inngestClient.createFunction(
     ],
   },
 
+  // TODO: Implement the actual verification logic for each step in the pipeline
   async ({ event, step }) => {
     const { merchantId, verificationId } = event.data;
 
