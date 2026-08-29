@@ -1,36 +1,48 @@
 import { inngestClient } from "./client";
 
-export const helloWorldFunction = inngestClient.createFunction(
-    {
-        id: "hello-world",
-        triggers: [{event: "app/hello.world"}]
-    },
-    async({event, step}) => {
-        console.log("Hello World! Event received:", event.name);
+export const merchantPipeline = inngestClient.createFunction(
+  {
+    id: "verify-merchant",
+    triggers: [
+      {
+        event: "verification/created",
+      },
+    ],
+  },
 
-        // step 1: greet the user
-        const result1 = await step.run("create-greeting", async () => {
-            const name = event.data.name;
-            const message = `Hello, ${name}!`;
-            console.log("Greeting created:", message);
-            return message;
-        })
+  async ({ event, step }) => {
+    const { merchantId, verificationId } = event.data;
 
-        console.log("Step 1 successful. Result:", result1);
-        
-        const result2 = await step.run("step-2", async () => {
-          const name = event.data.name;
-          const message = `Step 2 completed for ${name}!`;
-          console.log("did you finish step 1?? OFC YES MAN!!!");
-          return message;
-        });
-        
-        return {
-            message: "finished executing steps",
-            step1Result: result1,
-            step2Result: result2,
-            eventId: event.id,
-            finishedAt: new Date().toISOString()
-        }
-    }
+    await step.run("start-verification", async () => {
+      console.log(
+        `Starting verification ${verificationId} for merchant ${merchantId}`,
+      );
+    });
+
+    await step.run("verify-phone-number", async () => {
+      console.log(`Verifying phone for merchant ${merchantId}`);
+    });
+
+    await step.run("verify-gst-number", async () => {
+      console.log(`Verifying GST for merchant ${merchantId}`);
+    });
+
+    await step.run("verify-website", async () => {
+      console.log(`Verifying website for merchant ${merchantId}`);
+    });
+
+    await step.run("run-ml-prediction", async () => {
+      console.log(`Running ML prediction for merchant ${merchantId}`);
+    });
+
+    await step.run("complete-verification", async () => {
+      console.log(`Verification ${verificationId} completed`);
+    });
+
+    return {
+      merchantId,
+      verificationId,
+      status: "COMPLETED",
+    };
+  },
 );
