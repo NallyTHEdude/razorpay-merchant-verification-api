@@ -21,7 +21,7 @@ export const payments = pgTable("payments", {
 
     paymentMethod: paymentMethodEnum("payment_method").notNull(),
 
-    isInternational: boolean("is_international").notNull(),
+    isInternational: boolean("is_international").notNull().default(false),
 
     createdAt: timestamp("created_at", {withTimezone: true}).defaultNow().notNull(),
   },
