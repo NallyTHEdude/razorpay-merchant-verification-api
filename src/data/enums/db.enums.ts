@@ -42,8 +42,8 @@ export enum VerificationStatus {
 
 export enum PaymentStatus {
   SUCCESS = "SUCCESS",
+  FAILED = "FAILED",
   REFUNDED = "REFUNDED",
-  CHARGEBACK = "CHARGEBACK",
 }
 
 export enum PaymentMethod {
