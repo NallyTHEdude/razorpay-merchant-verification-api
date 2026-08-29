@@ -2,16 +2,17 @@ import { Payment } from "@/data/types/Payment";
 import { PaymentStatus } from "@/data/enums/db.enums";
 import { config } from "@/config/env/env";
 
+import {
+  VerificationResults,
+  MLPredictionData,
+} from "@/data/types/pipelineTypes";
+
 const HIGH_VALUE_PAYMENT_THRESHOLD = 10_000;
 
 export const logRegPrediction = async (
   paymentData: Payment[],
-  verificationResults: {
-    isGstNumberVerified: boolean;
-    isPhoneNumberVerified: boolean;
-    isWebsiteVerified: boolean;
-  },
-) => {
+  verificationResults: VerificationResults,
+): Promise<MLPredictionData> => {
   const paymentCount = paymentData.length;
 
   if (paymentCount === 0) {
@@ -56,18 +57,18 @@ export const logRegPrediction = async (
     throw new Error(`ML API request failed with status ${response.status}`);
   }
 
- const result = await response.json();
+  const result = await response.json();
 
- if (
-   typeof result.fraudProbability !== "number" ||
-   typeof result.riskLevel !== "string"
- ) {
-   throw new Error("Invalid response from ML API");
- }
+  if (
+    typeof result.fraudProbability !== "number" ||
+    typeof result.riskLevel !== "string"
+  ) {
+    throw new Error("Invalid response from ML API");
+  }
 
- return {
-   ...predictionData,
-   fraudProbability: result.fraudProbability,
-   riskLevel: result.riskLevel,
- };
+  return {
+    ...predictionData,
+    fraudProbability: result.fraudProbability,
+    riskLevel: result.riskLevel,
+  };
 };

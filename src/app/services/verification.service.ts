@@ -74,6 +74,7 @@ export const create = async (createVerificationDto: { merchantId: string }): Pro
     }
 
     // TODO: do not fetch all payments, fetch most recent 100 payments in production, this is just for testing purposes
+    // also make it atomic for consistency
     const merchantPayments = await getAllPayments(createVerificationDto.merchantId);
 
     // trigger the verification pipeline using Inngest
