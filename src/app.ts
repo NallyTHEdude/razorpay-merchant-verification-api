@@ -29,7 +29,7 @@ app.use("/api-docs", swaggerRouter);
 app.use("/api/health", healthRoute);
 app.use("/api/merchant", merchantRoute);
 app.use("/api/verification", verificationRoute);
-// app.use("/api/payment", paymentRoute); TODO: uncomment when done
+app.use("/api/payment", paymentRoute);
 
 
 app.use(globalErrorHandler);
