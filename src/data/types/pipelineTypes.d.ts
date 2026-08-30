@@ -24,7 +24,24 @@ export type MLPredictionData = {
   riskLevel: "LOW" | "MEDIUM" | "HIGH";
 };
 
-export type WebsiteData = unknown;
+export type WebsiteData = {
+  url: string;
+  businessName?: string;
+  contactInformation?: string;
+  physicalAddress?: string;
+  productsOrServices?: string;
+  policies?: {
+    privacyPolicy?: string;
+    termsAndConditions?: string;
+    refundPolicy?: string;
+  };
+  scrapedAt: string;
+};
+
+export type WebsiteVerificationResult = {
+  websiteData: WebsiteData | null;
+  isWebsiteVerified: boolean;
+};
 
 export type PipelineResults = {
   merchant: Merchant;
@@ -34,7 +51,7 @@ export type PipelineResults = {
   isPhoneNumberVerified: boolean;
   isGstNumberVerified: boolean;
 
-  websiteData: WebsiteData;
+  websiteData: WebsiteData | null;
   isWebsiteVerified: boolean;
 
   mlPredictionData: MLPredictionData;
