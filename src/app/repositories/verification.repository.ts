@@ -1,7 +1,8 @@
 import {db} from "@/db";
-import {eq, and} from "drizzle-orm";
+import {eq, and, desc} from "drizzle-orm";
 import { verifications as verificationTable } from "@/db/schemas/verifications.schema";
 import type { NewVerification, Verification } from "@/data/types/Verification";
+import { VerificationStatus } from "@/data/enums/db.enums";
 
 export const getAllVerifications = async (merchantId: string): Promise<Verification[]> => {
     return db.select().from(verificationTable).where(eq(verificationTable.merchantId, merchantId));
@@ -36,3 +37,30 @@ export const updateVerificationById = async (merchantId: string, verificationId:
     .returning();
     return updatedVerification ?? null;
 }
+
+export const markVerificationAsServerError = async (
+  verificationId: string,
+): Promise<Verification | null> => {
+  const [updatedVerification] = await db
+    .update(verificationTable)
+    .set({
+      verificationStatus: VerificationStatus.SERVER_ERROR,
+    })
+    .where(eq(verificationTable.id, verificationId))
+    .returning();
+
+  return updatedVerification ?? null;
+};
+
+export const getLatestVerificationByMerchantId = async (
+  merchantId: string,
+): Promise<Verification | null> => {
+  const [verification] = await db
+    .select()
+    .from(verificationTable)
+    .where(eq(verificationTable.merchantId, merchantId))
+    .orderBy(desc(verificationTable.createdAt))
+    .limit(1);
+
+  return verification ?? null;
+};
