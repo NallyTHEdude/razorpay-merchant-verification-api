@@ -41,10 +41,18 @@ export type WebsiteVerificationResult = {
   isWebsiteVerified: boolean;
 };
 
+export type PipelineVerification = Omit<Verification, "createdAt"> & {
+  createdAt: string;
+};
+
+export type PipelinePayment = Omit<Payment, "createdAt"> & {
+  createdAt: string;
+};
+
 export type PipelineResults = {
   merchant: Merchant;
-  verification: Verification;
-  recentPayments: Payment[];
+  verification: PipelineVerification;
+  recentPayments: PipelinePayment[];
 
   isPhoneNumberVerified: boolean;
   isGstNumberVerified: boolean;
