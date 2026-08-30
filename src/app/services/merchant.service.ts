@@ -14,6 +14,7 @@ import {
   deleteMerchantById,
 } from "../repositories/merchant.repository";
 import { inngestClient } from "@/config/pipeline/client";
+import { request as requestVerification } from "@/app/services/verification.service";
 
 export const getAll = async (): Promise<Merchant[]> => {
   const allMerchants: Merchant[] = await getAllMerchants();
@@ -63,7 +64,7 @@ export const create = async (merchantData: CreateMerchantDto): Promise<Merchant>
 
 // new verification is created on merchat update, so we need to trigger the pipeline here
 export const update = async (id: string, newMerchantData: UpdateMerchantDto): Promise<Merchant> => {
-  const updatedMerchant: Merchant | null = await updateMerchant(id, newMerchantData);
+  const updatedMerchant = await updateMerchant(id, newMerchantData);
   if (!updatedMerchant) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
@@ -71,11 +72,8 @@ export const update = async (id: string, newMerchantData: UpdateMerchantDto): Pr
     );
   }
 
-  await inngestClient.send({
-    name: "verification/requested",
-    data: {
-      merchant: { ...updatedMerchant },
-    },
+  await requestVerification({
+    merchantId: updatedMerchant.id,
   });
 
   return updatedMerchant;
