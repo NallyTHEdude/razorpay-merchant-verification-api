@@ -47,7 +47,10 @@ export const getById = async (merchantId: string, verificationId: string): Promi
 export const request = async (requestVerificationDto: RequestVerificationDto): Promise<Verification> => {
   const { merchantId } = requestVerificationDto;
   if (!merchantId) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Merchant ID is required");
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      "Merchant ID is required",
+    );
   }
 
   // Get merchant
@@ -60,31 +63,45 @@ export const request = async (requestVerificationDto: RequestVerificationDto): P
   }
 
   // Create pending verification
-  const verification = await createVerification({
-    merchantId: merchant.id,
-    verificationStatus: VerificationStatus.PENDING,
-    isGstNumberVerified: false,
-    isPhoneNumberVerified: false,
-    isWebsiteVerified: false,
-    riskLevel: RiskLevel.VERY_HIGH,
-    trustscore: 0,
-    createdAt: new Date(),
-  });
-  if (!verification) {
-    throw new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      `Failed to create verification for merchant ${merchant.id}`,
-    );
+  try {
+    const verification = await createVerification({
+      merchantId: merchant.id,
+      verificationStatus: VerificationStatus.PENDING,
+      isGstNumberVerified: false,
+      isPhoneNumberVerified: false,
+      isWebsiteVerified: false,
+      riskLevel: RiskLevel.VERY_HIGH,
+      trustscore: 0,
+      createdAt: new Date(),
+    });
+
+    if (!verification) {
+      throw new ApiError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        `Failed to create verification for merchant ${merchant.id}`,
+      );
+    }
+
+    // Trigger asynchronous verification pipeline
+    await inngestClient.send({
+      name: "verification/requested",
+      data: {
+        merchant,
+        verificationId: verification.id,
+      },
+    });
+
+    return verification;
+  } catch (error: any) {
+    const pgError = error.cause ?? error;
+    // PostgreSQL unique constraint violation
+    if (pgError.code === "23505" && pgError.constraint === "one_pending_verification_per_merchant") {
+      throw new ApiError(
+        StatusCodes.CONFLICT,
+        "Pending verification already exists, please wait until it is finished",
+      );
+    }
+
+    throw error;
   }
-
-  // Trigger asynchronous verification pipeline
-  await inngestClient.send({
-    name: "verification/requested",
-    data: {
-      merchant,
-      verificationId: verification.id,
-    },
-  });
-
-  return verification;
 };
