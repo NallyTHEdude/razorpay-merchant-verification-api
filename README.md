@@ -44,7 +44,18 @@ Both the API server and the Inngest development server need to be running to tes
 
 ## Notes
 
-- A new Inngest event is triggered every time the `createVerification` endpoint is called.
+## Notes
+
+- A new Inngest event is triggered whenever a merchant verification is requested.
+
 - The verification record is initially created with a `PENDING` status and is processed asynchronously by the Inngest workflow.
+
+- Only one `PENDING` verification is allowed per merchant. A new request is rejected until the current verification is finished.
+
+- Merchant updates are verified before being saved. If verification fails, the existing merchant data is unchanged.
+
+- Pipeline stages can retry when temporary errors occur.
+
 - You can monitor the verification workflows through the Inngest UI at: `http://localhost:8288`
+
 - Swagger is used for API documentation and can be used to test the available endpoints with your own data.
