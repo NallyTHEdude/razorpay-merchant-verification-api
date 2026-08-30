@@ -35,7 +35,7 @@ export enum RiskLevel {
 
 export enum VerificationStatus {
   PENDING = "PENDING",
-  IN_PROGRESS = "IN_PROGRESS",
+  SERVER_ERROR = "SERVER_ERROR",
   COMPLETED = "COMPLETED",
   FAILED = "FAILED",
 }
