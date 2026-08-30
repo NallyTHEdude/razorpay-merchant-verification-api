@@ -39,11 +39,11 @@ export const requestVerification = async (req: Request<VerificationMerchantIdPar
     merchantId,
   };
 
-  await request(requestVerificationDto);
+  const verification = await request(requestVerificationDto);
 
   new ApiResponse(
     StatusCodes.ACCEPTED,
-    null,
+    verification,
     "Verification requested successfully",
   ).send(res);
 };
