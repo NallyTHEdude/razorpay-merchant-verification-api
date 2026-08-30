@@ -14,6 +14,12 @@ export type VerificationMerchantIdParam = {
   merchantId: string;
 };
 
-export interface RequestVerificationDto {
-  merchantId: string;
-}
+export type RequestVerificationDto =
+  {
+      merchantId: string;
+      merchant?: never;
+  } | 
+  {
+      merchant: Merchant;
+      merchantId?: never;
+  };
