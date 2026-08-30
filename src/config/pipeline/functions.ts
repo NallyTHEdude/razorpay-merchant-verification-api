@@ -12,9 +12,10 @@ import { createVerification } from "@/app/repositories/verification.repository";
 import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
 import { getHundredLatestPaymentsByMerchantId } from "@/app/repositories/payment.repository";
 
-export const merchantPipeline = inngestClient.createFunction(
+export const verificationPipeline = inngestClient.createFunction(
   {
     id: "verify-merchant",
+    retries: 3,
     triggers: [
       {
         event: "verification/requested",
@@ -113,7 +114,7 @@ export const merchantPipeline = inngestClient.createFunction(
     // Collect all pipeline results
     const pipelineResults: PipelineResults = {
       merchant,
-      verification: verification ,
+      verification: verification,
       recentPayments: recentPayments,
 
       isPhoneNumberVerified,
@@ -121,7 +122,7 @@ export const merchantPipeline = inngestClient.createFunction(
 
       websiteData,
 
-      // Website accessibility, not legitimacy
+      // Website verification result from Firecrawl Agent
       isWebsiteVerified,
 
       mlPredictionData,

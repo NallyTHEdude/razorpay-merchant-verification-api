@@ -3,7 +3,7 @@ import { serve } from "inngest/express";
 import { globalErrorHandler } from "@/utils/errors/globalErrorHandler";
 
 import { inngestClient } from "@/config";
-import { merchantPipeline } from "./config/pipeline/functions";
+import { verificationPipeline } from "./config/pipeline/functions";
 
 //import routes
 import { swaggerRouter } from "@/config";
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use("/api/inngest", serve({
     client: inngestClient,
     functions: [
-        merchantPipeline,
+        verificationPipeline,
     ]
 }))
 
