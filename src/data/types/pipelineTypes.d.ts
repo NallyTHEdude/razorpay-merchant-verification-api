@@ -71,3 +71,10 @@ export type VerificationUpdateData = {
   trustscore: number;
   riskLevel: RiskLevel;
 };
+
+export type VerificationRequestedEvent = {
+  name: "verification/requested";
+  data: {
+    merchant: Merchant;
+  };
+};
