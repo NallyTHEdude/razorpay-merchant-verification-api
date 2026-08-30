@@ -15,11 +15,9 @@ export type MLPredictionData = {
   failedPaymentRate: number;
   highValuePaymentRate: number;
   internationalPaymentRate: number;
-
   isGstNumberVerified: boolean;
   isPhoneNumberVerified: boolean;
   isWebsiteVerified: boolean;
-
   fraudProbability: number;
   riskLevel: "LOW" | "MEDIUM" | "HIGH";
 };
@@ -50,9 +48,9 @@ export type PipelineResults = {
 
   isPhoneNumberVerified: boolean;
   isGstNumberVerified: boolean;
+  isWebsiteVerified: boolean;
 
   websiteData: WebsiteData | null;
-  isWebsiteVerified: boolean;
 
   mlPredictionData: MLPredictionData;
 };

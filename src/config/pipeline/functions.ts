@@ -22,66 +22,94 @@ export const merchantPipeline = inngestClient.createFunction(
   async ({ event, step }) => {
     const { merchant, verification, recentPayments } = event.data;
 
+    // Start verification
     await step.run("start-verification", async () => {
       console.log(
         `Starting verification ${verification.id} for merchant ${merchant.id}`,
       );
     });
 
+    // Verify phone number
     const isPhoneNumberVerified = await step.run(
       "verify-phone-number",
       async () => {
-        console.log(`Verifying phone number for merchant ${merchant.id}`);
+        console.log(
+          `Verifying phone number for merchant ${merchant.id}`,
+        );
 
         return verifyPhoneNumber(merchant.phoneNumber);
       },
     );
 
+    // Verify GST number
     const isGstNumberVerified = await step.run(
       "verify-gst-number",
       async () => {
-        console.log(`Verifying GST for merchant ${merchant.id}`);
+        console.log(
+          `Verifying GST for merchant ${merchant.id}`,
+        );
 
         return gstNumberVerification(merchant.gstNumber);
       },
     );
 
+    // Investigate website and collect evidence
     const { websiteData, isWebsiteVerified } = await step.run(
       "verify-website",
       async () => {
-        console.log(
-          `Verifying website and getting data for merchant ${merchant.id}`,
-        );
+        console.log(`Verifying website for merchant ${merchant.id}`);
 
-        return fetchWebsiteData(merchant.websiteUrl);
+        return fetchWebsiteData(
+          merchant.websiteUrl,
+          merchant.businessName,
+          merchant.category,
+        );
       },
     );
 
-    const mlPredictionData = await step.run("run-ml-prediction", async () => {
-      console.log(`Running ML prediction for merchant ${merchant.id}`);
+    // Run ML fraud prediction
+    const mlPredictionData = await step.run(
+      "run-ml-prediction",
+      async () => {
+        console.log(
+          `Running ML prediction for merchant ${merchant.id}`,
+        );
 
-      return logRegPrediction(recentPayments, {
-        isGstNumberVerified,
-        isPhoneNumberVerified,
-        isWebsiteVerified,
-      });
-    });
+        return logRegPrediction(recentPayments, {
+          isGstNumberVerified,
+          isPhoneNumberVerified,
 
+          isWebsiteVerified,
+        });
+      },
+    );
+
+    // Collect all pipeline results
     const pipelineResults: PipelineResults = {
       merchant,
       verification,
       recentPayments,
+
       isPhoneNumberVerified,
       isGstNumberVerified,
+
       websiteData,
+
+      // Website accessibility, not legitimacy
       isWebsiteVerified,
+
       mlPredictionData,
     };
 
-    const result = await step.run("combine-results", async () => {
-      return combineResults(pipelineResults);
-    });
+    // Combine verification results
+    const result = await step.run(
+      "combine-results",
+      async () => {
+        return combineResults(pipelineResults);
+      },
+    );
 
+    // Persist final verification result
     const updatedVerificationData = await step.run(
       "update-verification",
       async () => {
@@ -89,7 +117,10 @@ export const merchantPipeline = inngestClient.createFunction(
           `Updating verification ${verification.id} for merchant ${merchant.id}`,
         );
 
-        return updateVerification(pipelineResults, result);
+        return updateVerification(
+          pipelineResults,
+          result,
+        );
       },
     );
 
@@ -97,6 +128,9 @@ export const merchantPipeline = inngestClient.createFunction(
       `Updated Verification: ${verification.id} for merchant: ${merchant.id}`,
     );
 
-    return {updatedVerificationData, pipelineResults};
+    return {
+      updatedVerificationData,
+      pipelineResults,
+    };
   },
 );
