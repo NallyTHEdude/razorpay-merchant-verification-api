@@ -13,7 +13,6 @@ import {
   updateMerchant,
   deleteMerchantById,
 } from "../repositories/merchant.repository";
-import { inngestClient } from "@/config/pipeline/client";
 import { request as requestVerification } from "@/app/services/verification.service";
 
 export const getAll = async (): Promise<Merchant[]> => {
