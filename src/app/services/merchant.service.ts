@@ -74,7 +74,7 @@ export const update = async (id: string, newMerchantData: UpdateMerchantDto): Pr
   await inngestClient.send({
     name: "verification/requested",
     data: {
-      merchant: updatedMerchant,
+      merchant: { ...updatedMerchant },
     },
   });
 
