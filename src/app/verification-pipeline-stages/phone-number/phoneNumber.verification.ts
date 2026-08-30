@@ -3,7 +3,7 @@
 export const verifyPhoneNumber = async (
   phoneNumber: string,
 ): Promise<boolean> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     // Simulate an API call
     setTimeout(
       () => {

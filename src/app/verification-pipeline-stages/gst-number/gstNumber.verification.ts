@@ -2,7 +2,7 @@
 export const gstNumberVerification = async (
   gstNumber: string,
 ): Promise<boolean> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     setTimeout(
       () => {
         // Mock GST verification API
