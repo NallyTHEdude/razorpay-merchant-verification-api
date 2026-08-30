@@ -11,6 +11,7 @@ import {
   persistVerificationResult,
   applyMerchantUpdate,
 } from "./pipeline";
+
 import { Merchant } from "@/data/types/Merchant";
 import { markVerificationAsServerError } from "@/app/repositories/verification.repository";
 import { VerificationStatus } from "@/data/enums/db.enums";
@@ -18,7 +19,8 @@ import { VerificationStatus } from "@/data/enums/db.enums";
 export const verificationPipeline = inngestClient.createFunction(
   {
     id: "verify-merchant",
-    retries: 2, // 2 retries after the initial attempt, total 3 attemts
+    retries: 2, // 2 retries after the initial attempt, total 3 attempts
+
     triggers: [
       {
         event: "verification/requested",
@@ -63,38 +65,36 @@ export const verificationPipeline = inngestClient.createFunction(
       },
     );
 
-    // Step 2: Verify phone number
-    const isPhoneNumberVerified = await step.run(
-      "verify-phone-number",
-      async () => {
-        return runPhoneVerification(merchant);
-      },
-    );
+    // Step 2-4: Run independent verification stages concurrently for better latency
+    const [isPhoneNumberVerified, isGstNumberVerified, websiteVerification] =
+      await Promise.all([
+        // Step 2: Verify phone number
+        step.run("verify-phone-number", async () => {
+          return runPhoneVerification(merchant);
+        }),
 
-    // Step 3: Verify GST number
-    const isGstNumberVerified = await step.run(
-      "verify-gst-number",
-      async () => {
-        return runGstVerification(merchant);
-      },
-    );
+        // Step 3: Verify GST number
+        step.run("verify-gst-number", async () => {
+          return runGstVerification(merchant);
+        }),
 
-    // Step 4: Verify website
-    const { websiteData, isWebsiteVerified } = await step.run(
-      "verify-website",
-      async () => {
-        return runWebsiteVerification(merchant);
+        // Step 4: Verify website
+        step.run("verify-website", async () => {
+          return runWebsiteVerification(merchant);
 
-        // For testing purposes, we can return dummy data here
-        // return { 
-        //   websiteData: {
-        //     dummyData: true,
-        //     url: "wrong_dummy_url_here",
-        //   },
-        //   isWebsiteVerified: false,
-        // };
-      },
-    );
+          // For testing purposes, we can return dummy data here:
+          //
+          // return {
+          //   websiteData: {
+          //     dummyData: true,
+          //     url: "wrong_dummy_url_here",
+          //   },
+          //   isWebsiteVerified: false,
+          // };
+        }),
+      ]);
+
+    const { websiteData, isWebsiteVerified } = websiteVerification;
 
     // Step 5: Run ML prediction
     const mlPredictionData = await step.run("run-ml-prediction", async () => {
@@ -124,7 +124,7 @@ export const verificationPipeline = inngestClient.createFunction(
       return combinePipelineResults(pipelineResults);
     });
 
-    // Step 8: Persist final result
+    // Step 8: Persist final verification result
     const updatedVerificationData = await step.run(
       "update-verification",
       async () => {
@@ -132,6 +132,7 @@ export const verificationPipeline = inngestClient.createFunction(
       },
     );
 
+    // Step 9: Apply merchant update only after successful verification
     const updatedMerchant = await step.run(
       "apply-merchant-update",
       async () => {
@@ -158,7 +159,7 @@ export const verificationPipeline = inngestClient.createFunction(
     return {
       updatedVerificationData,
       pipelineResults,
-      updatedMerchant
+      updatedMerchant,
     };
   },
 );
