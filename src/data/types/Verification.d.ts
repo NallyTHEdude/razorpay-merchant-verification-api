@@ -14,6 +14,6 @@ export type VerificationMerchantIdParam = {
   merchantId: string;
 };
 
-export interface CreateVerificationDto {
+export interface RequestVerificationDto {
   merchantId: string;
 }
