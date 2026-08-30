@@ -83,11 +83,6 @@ export const fetchWebsiteData = async (
       maxCredits: 100,
     });
 
-    console.log(
-      "----- FIRECRAWL AGENT RESULT -----",
-      JSON.stringify(result, null, 2),
-    );
-
     if (!result.success || !result.data) {
       console.error("Firecrawl Agent failed:", result);
 

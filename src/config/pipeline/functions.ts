@@ -1,11 +1,11 @@
 import { inngestClient } from "./client";
 
-import { verifyPhoneNumber } from "@/app/verification-pipeline/stages/phone-number/phoneNumber.verification";
-import { gstNumberVerification } from "@/app/verification-pipeline/stages/gst-number/gstNumber.verification";
-import { logRegPrediction } from "@/app/verification-pipeline/stages/ml-prediction/logisticRegression";
-import { fetchWebsiteData } from "@/app/verification-pipeline/stages/web-scraper/website.verification";
-import { combineResults } from "@/app/verification-pipeline/stages/combine-results/combine-results";
-import { updateVerification } from "@/app/verification-pipeline/stages/update-verification/update-verification";
+import { verifyPhoneNumber } from "@/app/verification-pipeline-stages/phone-number/phoneNumber.verification";
+import { gstNumberVerification } from "@/app/verification-pipeline-stages/gst-number/gstNumber.verification";
+import { logRegPrediction } from "@/app/verification-pipeline-stages/ml-prediction/logisticRegression";
+import { fetchWebsiteData } from "@/app/verification-pipeline-stages/web-scraper/website.verification";
+import { combineResults } from "@/app/verification-pipeline-stages/combine-results/combine-results";
+import { updateVerification } from "@/app/verification-pipeline-stages/update-verification/update-verification";
 
 import { PipelineResults } from "@/data/types/pipelineTypes";
 import { createVerification } from "@/app/repositories/verification.repository";
