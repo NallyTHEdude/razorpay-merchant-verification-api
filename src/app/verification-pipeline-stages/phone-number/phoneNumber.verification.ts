@@ -10,7 +10,7 @@ export const verifyPhoneNumber = async (
         if (phoneNumber && phoneNumber.length === 10) {
           resolve(true);
         } else {
-          reject(new Error("Invalid phone number"));
+          resolve(false);
         }
       },
       Math.random() * 1000 + 500,

@@ -11,7 +11,7 @@ export const gstNumberVerification = async (
         if (gstNumber && gstRegex.test(gstNumber)) {
           resolve(true);
         } else {
-          reject(new Error("Invalid GST number"));
+          resolve(false);
         }
       },
       Math.random() * 1000 + 500,
