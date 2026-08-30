@@ -3,7 +3,7 @@ import { inngestClient } from "./client";
 import { verifyPhoneNumber } from "@/app/verification-pipeline/stages/phone-number/phoneNumber.verification";
 import { gstNumberVerification } from "@/app/verification-pipeline/stages/gst-number/gstNumber.verification";
 import { logRegPrediction } from "@/app/verification-pipeline/stages/ml-prediction/logisticRegression";
-import { fetchWebstiteData } from "@/app/verification-pipeline/stages/web-scraper/website.verification";
+import { fetchWebsiteData } from "@/app/verification-pipeline/stages/web-scraper/website.verification";
 import { combineResults } from "@/app/verification-pipeline/stages/combine-results/combine-results";
 import { updateVerification } from "@/app/verification-pipeline/stages/update-verification/update-verification";
 
@@ -53,7 +53,7 @@ export const merchantPipeline = inngestClient.createFunction(
           `Verifying website and getting data for merchant ${merchant.id}`,
         );
 
-        return fetchWebstiteData(merchant.websiteUrl);
+        return fetchWebsiteData(merchant.websiteUrl);
       },
     );
 
@@ -97,6 +97,6 @@ export const merchantPipeline = inngestClient.createFunction(
       `Updated Verification: ${verification.id} for merchant: ${merchant.id}`,
     );
 
-    return updatedVerificationData;
+    return {updatedVerificationData, pipelineResults};
   },
 );
