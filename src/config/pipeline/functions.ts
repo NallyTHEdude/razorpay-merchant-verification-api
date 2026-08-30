@@ -9,11 +9,11 @@ import {
   buildPipelineResults,
   combinePipelineResults,
   persistVerificationResult,
+  applyMerchantUpdate,
 } from "./pipeline";
-
 import { Merchant } from "@/data/types/Merchant";
-
 import { markVerificationAsServerError } from "@/app/repositories/verification.repository";
+import { VerificationStatus } from "@/data/enums/db.enums";
 
 export const verificationPipeline = inngestClient.createFunction(
   {
@@ -27,19 +27,12 @@ export const verificationPipeline = inngestClient.createFunction(
 
     // Runs after all retries are exhausted
     onFailure: async (failure) => {
-      const merchant = (
-        failure.event.data.event.data as unknown as {
-          merchant: Merchant;
-          verificationId: string;
-        }
-      ).merchant;
+      const eventData = failure.event.data.event.data as unknown as {
+        merchant: Merchant;
+        verificationId: string;
+      };
 
-      const verificationId = (
-        failure.event.data.event.data as unknown as {
-          merchant: Merchant;
-          verificationId: string;
-        }
-      ).verificationId;
+      const { merchant, verificationId } = eventData;
 
       console.error(
         `Verification pipeline permanently failed for merchant ${merchant.id}`,
@@ -47,12 +40,13 @@ export const verificationPipeline = inngestClient.createFunction(
       );
 
       await markVerificationAsServerError(verificationId);
+
       console.log(`Verification ${verificationId} marked as SERVER_ERROR`);
     },
   },
 
   async ({ event, step }) => {
-    const { merchant, verificationId } = event.data;
+    const { merchant, verificationId, isMerchantUpdate } = event.data;
 
     // Step 0: Start verification
     await step.run("start-verification", async () => {
@@ -129,6 +123,25 @@ export const verificationPipeline = inngestClient.createFunction(
       },
     );
 
+    const updatedMerchant = await step.run(
+      "apply-merchant-update",
+      async () => {
+        if (!isMerchantUpdate) {
+          return null;
+        }
+
+        if (result.verificationStatus !== VerificationStatus.COMPLETED) {
+          return null;
+        }
+
+        console.log(
+          `Verification successful. Applying merchant update for ${merchant.id}`,
+        );
+
+        return applyMerchantUpdate(merchant);
+      },
+    );
+
     console.log(
       `Updated verification ${verification.id} for merchant ${merchant.id}`,
     );
@@ -136,6 +149,7 @@ export const verificationPipeline = inngestClient.createFunction(
     return {
       updatedVerificationData,
       pipelineResults,
+      updatedMerchant
     };
   },
 );

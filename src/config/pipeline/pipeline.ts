@@ -11,6 +11,8 @@ import { fetchWebsiteData } from "@/app/verification-pipeline-stages/web-scraper
 import { logRegPrediction } from "@/app/verification-pipeline-stages/ml-prediction/logisticRegression";
 import { combineResults } from "@/app/verification-pipeline-stages/combine-results/combine-results";
 import { updateVerification } from "@/app/verification-pipeline-stages/update-verification/update-verification";
+import { updateMerchant } from "@/app/repositories/merchant.repository";
+import { PipelinePayment } from "@/data/types/pipelineTypes";
 
 // Load existing verification and recent payments
 export const loadVerificationContext = async (
@@ -67,7 +69,7 @@ export const runWebsiteVerification = async (merchant: Merchant) => {
 // Run ML fraud prediction
 export const runMlPrediction = async (
   merchant: Merchant,
-  recentPayments: PipelineResults["recentPayments"],
+  recentPayments: PipelinePayment[],
   isGstNumberVerified: boolean,
   isPhoneNumberVerified: boolean,
   isWebsiteVerified: boolean,
@@ -121,4 +123,14 @@ export const persistVerificationResult = async (
   );
 
   return updateVerification(pipelineResults, result);
+};
+
+export const applyMerchantUpdate = async (merchant: Merchant): Promise<Merchant | null> => {
+  return updateMerchant(merchant.id, {
+    businessName: merchant.businessName,
+    category: merchant.category,
+    gstNumber: merchant.gstNumber,
+    websiteUrl: merchant.websiteUrl,
+    phoneNumber: merchant.phoneNumber,
+  });
 };
