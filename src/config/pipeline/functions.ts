@@ -11,76 +11,103 @@ import { PipelineResults } from "@/data/types/pipelineTypes";
 import { createVerification } from "@/app/repositories/verification.repository";
 import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
 import { getHundredLatestPaymentsByMerchantId } from "@/app/repositories/payment.repository";
+import { Merchant } from "@/data/types/Merchant";
+
+import {
+  getLatestVerificationByMerchantId,
+  markVerificationAsServerError,
+} from "@/app/repositories/verification.repository";
 
 export const verificationPipeline = inngestClient.createFunction(
   {
     id: "verify-merchant",
-    retries: 3,
+    retries: 0,
     triggers: [
       {
         event: "verification/requested",
       },
     ],
+    onFailure: async (failure) => {
+      const merchant = (
+        failure.event.data.event.data as unknown as {merchant: Merchant}).merchant;
+
+      console.error(`Verification pipeline permanently failed for merchant ${merchant.id}`, failure.error);
+
+      const verification = await getLatestVerificationByMerchantId(merchant.id);
+      if (!verification) {
+        console.error(`No verification found for merchant ${merchant.id}`);
+        return;
+      }
+
+      await markVerificationAsServerError(verification.id);
+      console.log(`Verification ${verification.id} marked as SERVER_ERROR`);
+    },
   },
 
   async ({ event, step }) => {
-    const {merchant} = event.data;
+    const { merchant } = event.data;
 
-    // Start verification
+    //step0: Start verification
     await step.run("start-verification", async () => {
-      console.log(`Starting verification for merchant ${merchant.id}`,);
+      console.log(`Starting verification for merchant ${merchant.id}`);
     });
 
-    // by the end of below step we will have: {merchant, verification, recentPayments}
-    const {verification, recentPayments} = await step.run("load-context", async () => {
-      const newVerification = await createVerification({
-        merchantId: merchant.id,
-        verificationStatus: VerificationStatus.PENDING,
-        isGstNumberVerified: false,
-        isPhoneNumberVerified: false,
-        isWebsiteVerified: false,
-        riskLevel: RiskLevel.VERY_HIGH,
-        trustscore: 0,
-        createdAt: new Date(),
-      });
+    //step1:  by the end of below step we will have: {merchant, verification, recentPayments}
+    const { verification, recentPayments } = await step.run(
+      "load-context",
+      async () => {
+        const newVerification = await createVerification({
+          merchantId: merchant.id,
+          verificationStatus: VerificationStatus.PENDING,
+          isGstNumberVerified: false,
+          isPhoneNumberVerified: false,
+          isWebsiteVerified: false,
+          riskLevel: RiskLevel.VERY_HIGH,
+          trustscore: 0,
+          createdAt: new Date(),
+        });
 
-      if(!newVerification) {
-        throw new Error(`Failed to create verification for merchant ${merchant.id}`);
-      }
+        if (!newVerification) {
+          throw new Error(
+            `Failed to create verification for merchant ${merchant.id}`,
+          );
+        }
 
-      const recentPayments = await getHundredLatestPaymentsByMerchantId(merchant.id);
+        const recentPayments = await getHundredLatestPaymentsByMerchantId(
+          merchant.id,
+        );
 
-      console.log(`Loaded verifiation and payments for merchant ${merchant.id}`);
-      return { 
-        verification: newVerification, 
-        recentPayments 
-      };
-    });
-    // Verify phone number
+        console.log(
+          `Loaded verifiation and payments for merchant ${merchant.id}`,
+        );
+        return {
+          verification: newVerification,
+          recentPayments,
+        };
+      },
+    );
+
+    //step2: Verify phone number
     const isPhoneNumberVerified = await step.run(
       "verify-phone-number",
       async () => {
-        console.log(
-          `Verifying phone number for merchant ${merchant.id}`,
-        );
+        console.log(`Verifying phone number for merchant ${merchant.id}`);
 
         return verifyPhoneNumber(merchant.phoneNumber);
       },
     );
 
-    // Verify GST number
+    //step3: Verify GST number
     const isGstNumberVerified = await step.run(
       "verify-gst-number",
       async () => {
-        console.log(
-          `Verifying GST for merchant ${merchant.id}`,
-        );
-
+        console.log(`Verifying GST for merchant ${merchant.id}`);
+        throw new Error("TEST: GST verification failed"); //FIXME: test only
         return gstNumberVerification(merchant.gstNumber);
       },
     );
 
-    // Investigate website and collect evidence
+    //step4: Investigate website and collect evidence
     const { websiteData, isWebsiteVerified } = await step.run(
       "verify-website",
       async () => {
@@ -94,24 +121,19 @@ export const verificationPipeline = inngestClient.createFunction(
       },
     );
 
-    // Run ML fraud prediction
-    const mlPredictionData = await step.run(
-      "run-ml-prediction",
-      async () => {
-        console.log(
-          `Running ML prediction for merchant ${merchant.id}`,
-        );
+    //step5: Run ML fraud prediction
+    const mlPredictionData = await step.run("run-ml-prediction", async () => {
+      console.log(`Running ML prediction for merchant ${merchant.id}`);
 
-        return logRegPrediction(recentPayments, {
-          isGstNumberVerified,
-          isPhoneNumberVerified,
+      return logRegPrediction(recentPayments, {
+        isGstNumberVerified,
+        isPhoneNumberVerified,
 
-          isWebsiteVerified,
-        });
-      },
-    );
+        isWebsiteVerified,
+      });
+    });
 
-    // Collect all pipeline results
+    //step6: Collect all pipeline results
     const pipelineResults: PipelineResults = {
       merchant,
       verification: verification,
@@ -128,15 +150,12 @@ export const verificationPipeline = inngestClient.createFunction(
       mlPredictionData,
     };
 
-    // Combine verification results
-    const result = await step.run(
-      "combine-results",
-      async () => {
-        return combineResults(pipelineResults);
-      },
-    );
+    //step7: Combine verification results
+    const result = await step.run("combine-results", async () => {
+      return combineResults(pipelineResults);
+    });
 
-    // Persist final verification result
+    //step8: Persist final verification result
     const updatedVerificationData = await step.run(
       "update-verification",
       async () => {
@@ -144,10 +163,7 @@ export const verificationPipeline = inngestClient.createFunction(
           `Updating verification ${verification.id} for merchant ${merchant.id}`,
         );
 
-        return updateVerification(
-          pipelineResults,
-          result,
-        );
+        return updateVerification(pipelineResults, result);
       },
     );
 
