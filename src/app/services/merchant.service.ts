@@ -10,7 +10,6 @@ import {
   getMerchantById,
   getMerchantByGstNumber,
   createMerchant,
-  updateMerchant,
   deleteMerchantById,
 } from "../repositories/merchant.repository";
 import { request as requestVerification } from "@/app/services/verification.service";
@@ -63,19 +62,27 @@ export const create = async (merchantData: CreateMerchantDto): Promise<Merchant>
 
 // new verification is created on merchat update, so we need to trigger the pipeline here
 export const update = async (id: string, newMerchantData: UpdateMerchantDto): Promise<Merchant> => {
-  const updatedMerchant = await updateMerchant(id, newMerchantData);
-  if (!updatedMerchant) {
+  // Get current merchant
+  const merchant = await getMerchantById(id);
+  if (!merchant) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
       `Merchant with id: ${id} does not exist`,
     );
   }
 
-  await requestVerification({
-    merchantId: updatedMerchant.id,
-  });
+  // Build proposed merchant without modifying DB
+  const proposedMerchant: Merchant = {...merchant, ...newMerchantData};
 
-  return updatedMerchant;
+  // Verify proposed data
+  await requestVerification({
+    merchant: proposedMerchant,
+  });
+  // Do NOT update the database
+  // The pipeline will update the merchant
+  // only if verification succeeds.
+
+  return proposedMerchant;
 };
 
 export const deleteById = async (id: string): Promise<Merchant> => {
