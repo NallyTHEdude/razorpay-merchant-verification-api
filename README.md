@@ -44,8 +44,6 @@ Both the API server and the Inngest development server need to be running to tes
 
 ## Notes
 
-## Notes
-
 - A new Inngest event is triggered whenever a merchant verification is requested.
 
 - The verification record is initially created with a `PENDING` status and is processed asynchronously by the Inngest workflow.
