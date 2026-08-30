@@ -1,12 +1,12 @@
 import Router from "express";
 import {
-    createVerification,
+    requestVerification,
     getVerificationById,
     getAllVerifications,
 } from "@/app/controllers/verification.controller";
 import { validate } from "@/app/middlewares/validate.middleware";
 import {
-    createVerificationValidator,
+    requestVerificationValidator,
     getVerificationByIdValidator,
 } from "@/app/validators/verification.validator";
 
@@ -152,6 +152,6 @@ router.get("/:merchantId", getAllVerifications);
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get("/:merchantId/:verificationId", validate(getVerificationByIdValidator), getVerificationById);
-router.post("/:merchantId", validate(createVerificationValidator), createVerification);
+router.post("/:merchantId", validate(requestVerificationValidator), requestVerification);
 
 export default router;

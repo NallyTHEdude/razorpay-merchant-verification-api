@@ -1,6 +1,6 @@
 import { param } from "express-validator";
 
-export const createVerificationValidator = [
+export const requestVerificationValidator = [
     param("merchantId")
         .trim()
         .notEmpty()

@@ -1,12 +1,17 @@
 import {
     getAll,
     getById,
-    create
+    request
 } from "@/app/services/verification.service";
 import { Request, Response } from "express";
 import { ApiResponse } from "@/utils/response/ApiResponse";
 import {StatusCodes} from "http-status-codes";
-import type { Verification, CreateVerificationDto, VerificationMerchantIdParam, VerificationIdParam } from "@/data/types/Verification";
+import type {
+  Verification,
+  RequestVerificationDto,
+  VerificationMerchantIdParam,
+  VerificationIdParam,
+} from "@/data/types/Verification";
 
 export const getAllVerifications = async (req: Request<VerificationMerchantIdParam>, res: Response) => {
     const { merchantId } = req.params;
@@ -28,15 +33,17 @@ export const getVerificationById = async (req: Request<VerificationMerchantIdPar
     ).send(res);
 }   
 
-export const createVerification = async (req: Request<VerificationMerchantIdParam>, res: Response) => {
+export const requestVerification = async (req: Request<VerificationMerchantIdParam>, res: Response) => {
   const { merchantId } = req.params;
-  const createVerificationDto: CreateVerificationDto = {
+  const requestVerificationDto: RequestVerificationDto = {
     merchantId,
   };
-  const verification = await create(createVerificationDto);
+
+  await request(requestVerificationDto);
+
   new ApiResponse(
-    StatusCodes.CREATED,
-    verification,
-    "Verification created successfully",
+    StatusCodes.ACCEPTED,
+    null,
+    "Verification requested successfully",
   ).send(res);
 };
