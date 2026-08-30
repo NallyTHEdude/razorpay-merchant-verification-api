@@ -14,6 +14,7 @@ An API that automates merchant verification and validity checks, while detecting
 3. **Drizzle ORM + PostgreSQL + pgvector** — Database access and vector embeddings.
 4. **Swagger** — OpenAPI-based API documentation.
 5. **Inngest** — Event-based asynchronous orchestration of the merchant verification pipeline.
+6. **Firecrawl** - Website analysis of merchant.
 
 ---
 
