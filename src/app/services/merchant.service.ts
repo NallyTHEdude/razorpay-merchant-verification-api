@@ -13,6 +13,7 @@ import {
   updateMerchant,
   deleteMerchantById,
 } from "../repositories/merchant.repository";
+import { inngestClient } from "@/config/pipeline/client";
 
 export const getAll = async (): Promise<Merchant[]> => {
   const allMerchants: Merchant[] = await getAllMerchants();
@@ -60,8 +61,7 @@ export const create = async (merchantData: CreateMerchantDto): Promise<Merchant>
   return newMerchant;
 };
 
-// TODO: triggern inngest event to re-run verification pipeline when merchant data is updated
-// MAKE THIS A TRANSSACTIONAL OPERATION
+// new verification is created on merchat update, so we need to trigger the pipeline here
 export const update = async (id: string, newMerchantData: UpdateMerchantDto): Promise<Merchant> => {
   const updatedMerchant: Merchant | null = await updateMerchant(id, newMerchantData);
   if (!updatedMerchant) {
@@ -70,6 +70,13 @@ export const update = async (id: string, newMerchantData: UpdateMerchantDto): Pr
       `Merchant with id: ${id} does not exist`,
     );
   }
+
+  await inngestClient.send({
+    name: "verification/requested",
+    data: {
+      merchant: updatedMerchant,
+    },
+  });
 
   return updatedMerchant;
 };
