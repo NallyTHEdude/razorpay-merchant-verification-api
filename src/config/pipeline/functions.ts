@@ -8,27 +8,53 @@ import { combineResults } from "@/app/verification-pipeline/stages/combine-resul
 import { updateVerification } from "@/app/verification-pipeline/stages/update-verification/update-verification";
 
 import { PipelineResults } from "@/data/types/pipelineTypes";
+import { createVerification } from "@/app/repositories/verification.repository";
+import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
+import { getHundredLatestPaymentsByMerchantId } from "@/app/repositories/payment.repository";
 
 export const merchantPipeline = inngestClient.createFunction(
   {
     id: "verify-merchant",
     triggers: [
       {
-        event: "verification/created",
+        event: "verification/requested",
       },
     ],
   },
 
   async ({ event, step }) => {
-    const { merchant, verification, recentPayments } = event.data;
+    const {merchant} = event.data;
 
     // Start verification
     await step.run("start-verification", async () => {
-      console.log(
-        `Starting verification ${verification.id} for merchant ${merchant.id}`,
-      );
+      console.log(`Starting verification for merchant ${merchant.id}`,);
     });
 
+    // by the end of below step we will have: {merchant, verification, recentPayments}
+    const {verification, recentPayments} = await step.run("load-context", async () => {
+      const newVerification = await createVerification({
+        merchantId: merchant.id,
+        verificationStatus: VerificationStatus.PENDING,
+        isGstNumberVerified: false,
+        isPhoneNumberVerified: false,
+        isWebsiteVerified: false,
+        riskLevel: RiskLevel.VERY_HIGH,
+        trustscore: 0,
+        createdAt: new Date(),
+      });
+
+      if(!newVerification) {
+        throw new Error(`Failed to create verification for merchant ${merchant.id}`);
+      }
+
+      const recentPayments = await getHundredLatestPaymentsByMerchantId(merchant.id);
+
+      console.log(`Loaded verifiation and payments for merchant ${merchant.id}`);
+      return { 
+        verification: newVerification, 
+        recentPayments 
+      };
+    });
     // Verify phone number
     const isPhoneNumberVerified = await step.run(
       "verify-phone-number",
@@ -87,8 +113,8 @@ export const merchantPipeline = inngestClient.createFunction(
     // Collect all pipeline results
     const pipelineResults: PipelineResults = {
       merchant,
-      verification,
-      recentPayments,
+      verification: verification ,
+      recentPayments: recentPayments,
 
       isPhoneNumberVerified,
       isGstNumberVerified,
