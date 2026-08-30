@@ -12,6 +12,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().min(0).max(65535).default(3000),
   DATABASE_URL: z.string().url(),
   ML_SERVICE_URL: z.string().url(),
+  FIRECRAWL_API_KEY: z.string(),
 });
 
 export const config = envSchema.parse(process.env);
