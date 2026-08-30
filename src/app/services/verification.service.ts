@@ -3,7 +3,7 @@ import {
     getAllVerifications,
     getByVerificationId
 } from "@/app/repositories/verification.repository";
-import { getAllPayments } from "@/app/repositories/payment.repository";
+import { getHundredLatestPaymentsByMerchantId } from "@/app/repositories/payment.repository";
 import {
     getMerchantById
 } from "@/app/repositories/merchant.repository";
@@ -74,8 +74,10 @@ export const create = async (createVerificationDto: { merchantId: string }): Pro
         )
     }
 
-    // TODO: do not fetch all payments, fetch most recent 100 payments in production, this is just for testing purposes
-    const merchantPayments = await getAllPayments(createVerificationDto.merchantId);
+    // Limit to the 100 most recent payments to keep the
+    // Inngest payload bounded and provide a manageable
+    // dataset for downstream ML/LLM processing.
+    const merchantPayments = await getHundredLatestPaymentsByMerchantId(createVerificationDto.merchantId);
 
     // trigger the verification pipeline using Inngest
     inngestClient.send({

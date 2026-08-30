@@ -1,7 +1,7 @@
 import {db} from "@/db";
 import {payments as paymentTable} from "@/db/schemas/payments.schema";
 import {Payment, NewPayment, CreatePaymentDto} from "@/data/types/Payment";
-import { eq, and } from "drizzle-orm/sql/expressions/index";
+import { eq, and, desc } from "drizzle-orm/sql/expressions/index";
 
 export const getAllPayments = async (merchantId: string) : Promise<Payment[]> => {
     return db.select().from(paymentTable).where(eq(paymentTable.merchantId, merchantId));
@@ -17,6 +17,13 @@ export const getPaymentById = async (merchantId: string, paymentId: string): Pro
     .limit(1);
     return payment ?? null;
 };
+
+export const getHundredLatestPaymentsByMerchantId = async (merchantId: string): Promise<Payment[]> => {
+    return db.select().from(paymentTable)
+    .where(eq(paymentTable.merchantId, merchantId))
+    .orderBy(desc(paymentTable.createdAt))
+    .limit(100);
+}
 export const createManyPayments = async (merchantId: string, payments: CreatePaymentDto[]): Promise<Payment[]> => {
     const newPayments: NewPayment[] = payments.map((payment) => ({ ...payment, merchantId }));
     return db.insert(paymentTable).values(newPayments).returning();
