@@ -1,16 +1,16 @@
-import { Payment } from "@/data/types/Payment";
 import { PaymentStatus } from "@/data/enums/db.enums";
 import { config } from "@/config/env/env";
 
 import {
   VerificationResults,
   MLPredictionData,
+  PipelinePayment,
 } from "@/data/types/pipelineTypes";
 
 const HIGH_VALUE_PAYMENT_THRESHOLD = 10_000;
 
 export const logRegPrediction = async (
-  paymentData: Payment[],
+  paymentData: PipelinePayment[],
   verificationResults: VerificationResults,
 ): Promise<MLPredictionData> => {
   const paymentCount = paymentData.length;
