@@ -60,6 +60,8 @@ export const create = async (merchantData: CreateMerchantDto): Promise<Merchant>
   return newMerchant;
 };
 
+// TODO: triggern inngest event to re-run verification pipeline when merchant data is updated
+// MAKE THIS A TRANSSACTIONAL OPERATION
 export const update = async (id: string, newMerchantData: UpdateMerchantDto): Promise<Merchant> => {
   const updatedMerchant: Merchant | null = await updateMerchant(id, newMerchantData);
   if (!updatedMerchant) {
