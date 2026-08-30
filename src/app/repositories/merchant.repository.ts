@@ -38,12 +38,13 @@ export const createMerchant = async (merchantData: CreateMerchantDto): Promise<M
 };
 
 export const updateMerchant = async (id: string, merchantData: UpdateMerchantDto): Promise<Merchant | null> => {
-    const [updatedMerchant] = await db.update(merchantTable)
+  const [updatedMerchant] = await db
+    .update(merchantTable)
     .set(merchantData)
     .where(eq(merchantTable.id, id))
     .returning();
 
-    return updatedMerchant ?? null;
+  return updatedMerchant ?? null;
 };
 
 export const deleteMerchantById = async (id: string): Promise<Merchant | null> => {
