@@ -84,6 +84,15 @@ export const verificationPipeline = inngestClient.createFunction(
       "verify-website",
       async () => {
         return runWebsiteVerification(merchant);
+
+        // For testing purposes, we can return dummy data here
+        // return { 
+        //   websiteData: {
+        //     dummyData: true,
+        //     url: "wrong_dummy_url_here",
+        //   },
+        //   isWebsiteVerified: false,
+        // };
       },
     );
 
