@@ -59,7 +59,7 @@ export const logRegPrediction = async (
     throw new Error(`ML API request failed with status ${response.status}`);
   }
 
-  const result = await response.json();
+  const result: unknown = await response.json();
 
   if (!isMlServiceResponse(result)) {
     throw new Error("Invalid response from ML API");
