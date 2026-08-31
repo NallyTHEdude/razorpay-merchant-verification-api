@@ -1,12 +1,12 @@
+import { config } from "@/config/env";
 import { PaymentStatus } from "@/data/enums/db.enums";
-import { config } from "@/config/env/env";
 
 import {
-  type VerificationResults,
   type MLPredictionData,
-  type MLServiceResponse,
   type MLRiskLevel,
+  type MLServiceResponse,
   type PipelinePayment,
+  type VerificationResults,
 } from "@/data/types/pipelineTypes";
 
 const HIGH_VALUE_PAYMENT_THRESHOLD = 10_000;
@@ -72,13 +72,13 @@ export const logRegPrediction = async (
   };
 };
 
-
-
 const ML_RISK_LEVELS: readonly MLRiskLevel[] = ["LOW", "MEDIUM", "HIGH"];
 
 function isMlServiceResponse(value: unknown): value is MLServiceResponse {
-  if (typeof value !== "object" || value === null) {return false;}
-  
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
   const v = value as Record<string, unknown>;
   return (
     typeof v.fraudProbability === "number" &&

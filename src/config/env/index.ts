@@ -13,6 +13,9 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   ML_SERVICE_URL: z.string().url(),
   FIRECRAWL_API_KEY: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_API_SECRET: z.string(),
+  CLOUDINARY_CLOUD_NAME: z.string(),
 });
 
 export const config = envSchema.parse(process.env);

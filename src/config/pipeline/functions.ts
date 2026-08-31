@@ -2,20 +2,20 @@ import { inngestClient } from "./client";
 import { verificationRequested } from "./eventSchemas";
 
 import {
-  loadVerificationContext,
-  runPhoneVerification,
-  runGstVerification,
-  runWebsiteVerification,
-  runMlPrediction,
+  applyMerchantUpdate,
   buildPipelineResults,
   combinePipelineResults,
+  loadVerificationContext,
   persistVerificationResult,
-  applyMerchantUpdate,
+  runGstVerification,
+  runMlPrediction,
+  runPhoneVerification,
+  runWebsiteVerification,
 } from "./pipeline";
 
-import { type Merchant } from "@/data/types/Merchant";
 import { markVerificationAsServerError } from "@/app/repositories/verification.repository";
 import { VerificationStatus } from "@/data/enums/db.enums";
+import { type Merchant } from "@/data/types/Merchant";
 
 export const verificationPipeline = inngestClient.createFunction(
   {
@@ -49,7 +49,9 @@ export const verificationPipeline = inngestClient.createFunction(
 
     // Step 0: Start verification
     await step.run("start-verification", () => {
-      console.log(`Starting verification ${verificationId} for merchant ${merchant.id}`);
+      console.log(
+        `Starting verification ${verificationId} for merchant ${merchant.id}`,
+      );
     });
 
     // Step 1: Load verification + recent payments
