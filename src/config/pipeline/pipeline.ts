@@ -106,7 +106,7 @@ export const buildPipelineResults = (
 };
 
 // Combine all verification results
-export const combinePipelineResults = async (
+export const combinePipelineResults = (
   pipelineResults: PipelineResults,
 ) => {
   return combineResults(pipelineResults);
