@@ -1,6 +1,8 @@
+import type { Request } from "express";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { type Category } from "@/data/enums"
-
+import type { Category } from "@/data/enums/db.enums";
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { merchants } from "@/db/schemas/merchants.schema";
 // database types
 export type Merchant = InferSelectModel<typeof merchants>;
 export type NewMerchant = InferInsertModel<typeof merchants>;
