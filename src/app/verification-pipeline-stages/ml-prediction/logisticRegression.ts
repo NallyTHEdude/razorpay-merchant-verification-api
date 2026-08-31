@@ -4,6 +4,8 @@ import { config } from "@/config/env/env";
 import {
   type VerificationResults,
   type MLPredictionData,
+  type MLServiceResponse,
+  type MLRiskLevel,
   type PipelinePayment,
 } from "@/data/types/pipelineTypes";
 
@@ -59,10 +61,7 @@ export const logRegPrediction = async (
 
   const result = await response.json();
 
-  if (
-    typeof result.fraudProbability !== "number" ||
-    typeof result.riskLevel !== "string"
-  ) {
+  if (!isMlServiceResponse(result)) {
     throw new Error("Invalid response from ML API");
   }
 
@@ -72,3 +71,18 @@ export const logRegPrediction = async (
     riskLevel: result.riskLevel,
   };
 };
+
+
+
+const ML_RISK_LEVELS: readonly MLRiskLevel[] = ["LOW", "MEDIUM", "HIGH"];
+
+function isMlServiceResponse(value: unknown): value is MLServiceResponse {
+  if (typeof value !== "object" || value === null) {return false;}
+  
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.fraudProbability === "number" &&
+    typeof v.riskLevel === "string" &&
+    ML_RISK_LEVELS.includes(v.riskLevel as MLRiskLevel)
+  );
+}
