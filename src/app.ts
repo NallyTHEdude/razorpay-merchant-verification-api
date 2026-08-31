@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 
 // suggested in docs
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+ 
 app.use(
   "/api/inngest",
   serve({
