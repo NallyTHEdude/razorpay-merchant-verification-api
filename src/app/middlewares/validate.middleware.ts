@@ -12,7 +12,7 @@ export const validate = (validators: ValidationChain[]): RequestHandler => {
     if (!errors.isEmpty()) {
       const details = errors.array().map((error) => ({
         field: "path" in error ? error.path : undefined,
-        message: error.msg,
+        message: typeof error.msg === "string" ? error.msg : String(error.msg),
       }));
 
       return next(
