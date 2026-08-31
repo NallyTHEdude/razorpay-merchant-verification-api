@@ -1,4 +1,5 @@
 import type { Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import { type HttpStatusCode } from "@/data/types/statusCodes";
 
 export class ApiResponse<T> {
@@ -11,7 +12,7 @@ export class ApiResponse<T> {
     this.statusCode = statusCode;
     this.data = data;
     this.message = message;
-    this.success = statusCode < 400;
+    this.success = statusCode < StatusCodes.BAD_REQUEST;
   }
 
   send(res: Response) {
