@@ -1,6 +1,6 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-// import type { VerificationStatus, RiskLevel } from "@/data/enums/db.enums";
-import type { verifications } from "@/db/schemas/verifications.schema";
+import { type verifications } from "@/db/schemas/verifications.schema";
+import type { Merchant } from "@/data/types/Merchant";
 
 export type Verification = InferSelectModel<typeof verifications>;
 
@@ -14,12 +14,5 @@ export type VerificationMerchantIdParam = {
   merchantId: string;
 };
 
-export type RequestVerificationDto =
-  {
-      merchantId: string;
-      merchant?: never;
-  } | 
-  {
-      merchant: Merchant;
-      merchantId?: never;
-  };
+// Verification.ts
+export type RequestVerificationDto = { source: "existing"; merchantId: string } | { source: "new"; merchant: Merchant };
