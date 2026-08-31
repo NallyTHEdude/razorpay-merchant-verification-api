@@ -2,7 +2,7 @@ import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
 
 import { type PipelineResults } from "@/data/types/pipelineTypes";
 
-export const combineResults = async (results: PipelineResults) => {
+export const combineResults = (results: PipelineResults) => {
   const trustscore = Math.round(
     (1 - results.mlPredictionData.fraudProbability) * 100,
   );
