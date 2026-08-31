@@ -1,6 +1,6 @@
 import { type Request, type Response, Router } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
-import { config } from "@/config";
+import { config } from "@/config/env/index";
 import { componentSchemas } from "./component-schemas.js";
 // @ts-expect-error swagger-model-validator does not provide TypeScript declarations by default, hence ignore
 import swaggerModelValidator from "swagger-model-validator";
