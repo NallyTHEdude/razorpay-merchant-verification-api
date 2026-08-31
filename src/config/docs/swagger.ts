@@ -1,5 +1,4 @@
-import Router from "express";
-import { type Request, type Response } from "express";
+import { type Request, type Response, Router } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import { config } from "@/config";
 import { componentSchemas } from "./component-schemas.js";
@@ -145,6 +144,7 @@ const swaggerUiOptions = {
 
 
 // validate swagger spec against the OpenAPI 3.0 specification
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- swagger-model-validator ships no type declarations
 swaggerModelValidator(swaggerSpec);
 
 
