@@ -9,6 +9,8 @@ export type VerificationResults = {
   isWebsiteVerified: boolean;
 };
 
+export type MLRiskLevel = "LOW" | "MEDIUM" | "HIGH";
+
 export type MLPredictionData = {
   paymentCount: number;
   averagePaymentAmount: number;
@@ -19,7 +21,7 @@ export type MLPredictionData = {
   isPhoneNumberVerified: boolean;
   isWebsiteVerified: boolean;
   fraudProbability: number;
-  riskLevel: "LOW" | "MEDIUM" | "HIGH";
+  riskLevel: MLRiskLevel;
 };
 
 export type WebsiteData = {
@@ -78,3 +80,8 @@ export type VerificationRequestedEvent = {
     merchant: Merchant;
   };
 };
+
+export interface MLServiceResponse {
+  fraudProbability: number;
+  riskLevel: MLRiskLevel;
+}
