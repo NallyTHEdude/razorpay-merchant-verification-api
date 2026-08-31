@@ -15,4 +15,12 @@ export type VerificationMerchantIdParam = {
 };
 
 // Verification.ts
-export type RequestVerificationDto = { source: "existing"; merchantId: string } | { source: "new"; merchant: Merchant };
+export type RequestVerificationDto =
+  | {
+      merchantId: string;
+      merchant?: never;
+    }
+  | {
+      merchant: Merchant;
+      merchantId?: never;
+    };

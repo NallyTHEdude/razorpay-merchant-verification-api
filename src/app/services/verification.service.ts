@@ -55,22 +55,26 @@ export const getById = async (
 export const request = async (
   requestVerificationDto: RequestVerificationDto,
 ): Promise<Verification> => {
-  let merchant: Merchant;
+    console.log("REQUEST DTO:", requestVerificationDto);
+    let merchant: Merchant;
 
- if (requestVerificationDto.source === "existing") {
-   const { merchantId } = requestVerificationDto;
-   const existingMerchant = await getMerchantById(merchantId);
-   if (!existingMerchant) {
-     throw new ApiError(
-       StatusCodes.NOT_FOUND,
-       `Merchant with id: ${merchantId} does not exist`,
-     );
-   }
-   merchant = existingMerchant;
- } else {
-   merchant = requestVerificationDto.merchant;
- }
+    if (requestVerificationDto.merchant) {
+      merchant = requestVerificationDto.merchant;
+    } else {
+      const { merchantId } = requestVerificationDto;
 
+      const existingMerchant = await getMerchantById(merchantId);
+
+      if (!existingMerchant) {
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          `Merchant with id: ${merchantId} does not exist`,
+        );
+      }
+
+      merchant = existingMerchant;
+    }
+    
   try {
     const verification = await createVerification({
       merchantId: merchant.id,
