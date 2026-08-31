@@ -18,4 +18,7 @@ const bootstrap = async () => {
 
 }
 
-bootstrap();
+bootstrap().catch((err: unknown) => {
+  console.error("Failed to start server:", err);
+  process.exit(1);
+});
