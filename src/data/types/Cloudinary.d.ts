@@ -1,3 +1,5 @@
+import type { CloudinaryFolderName } from "@/data/enums/cloudinary.enums";
+
 export type DocumentUploadOptions = {
-  folder: "merchant-documents" | "government-documents";
+  folder: CloudinaryFolderName;
 };

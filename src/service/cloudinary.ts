@@ -1,14 +1,14 @@
 import cloudinary from "@/config/cloudinary";
-import { DocumentUploadOptions } from "@/data/types/Cloudinary";
+import type { DocumentUploadOptions } from "@/data/types/Cloudinary";
 
 export const uploadDocument = (
   buffer: Buffer,
   options: DocumentUploadOptions,
 ): Promise<{
-    publicId: string; 
-    secureUrl: string;
-    format: string;
-    bytes: number;
+  publicId: string;
+  secureUrl: string;
+  format: string;
+  bytes: number;
 }> => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -19,7 +19,11 @@ export const uploadDocument = (
       },
       (error, result) => {
         if (error || !result) {
-          reject(error ?? new Error("Cloudinary upload failed"));
+          reject(
+            error instanceof Error
+              ? error
+              : new Error("Cloudinary upload failed"),
+          );
           return;
         }
 
