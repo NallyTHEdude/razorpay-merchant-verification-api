@@ -1,4 +1,5 @@
 import { inngestClient } from "./client";
+import { verificationRequested } from "./eventSchemas";
 
 import {
   loadVerificationContext,
@@ -21,11 +22,7 @@ export const verificationPipeline = inngestClient.createFunction(
     id: "verify-merchant",
     retries: 2, // 2 retries after the initial attempt, total 3 attempts
 
-    triggers: [
-      {
-        event: "verification/requested",
-      },
-    ],
+    triggers: [verificationRequested],
 
     // Runs after all retries are exhausted
     onFailure: async (failure) => {
@@ -51,10 +48,8 @@ export const verificationPipeline = inngestClient.createFunction(
     const { merchant, verificationId, isMerchantUpdate } = event.data;
 
     // Step 0: Start verification
-    await step.run("start-verification", async () => {
-      console.log(
-        `Starting verification ${verificationId} for merchant ${merchant.id}`,
-      );
+    await step.run("start-verification", () => {
+      console.log(`Starting verification ${verificationId} for merchant ${merchant.id}`);
     });
 
     // Step 1: Load verification + recent payments
