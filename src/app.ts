@@ -17,9 +17,9 @@ const app = express();
 app.use(express.json());
 
 // suggested in docs
- 
 app.use(
   "/api/inngest",
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   serve({
     client: inngestClient,
     functions: [verificationPipeline],
