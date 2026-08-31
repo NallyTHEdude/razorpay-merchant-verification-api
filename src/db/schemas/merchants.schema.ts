@@ -1,15 +1,15 @@
 import {
   pgTable,
+  pgEnum,
   uniqueIndex,
   uuid,
   varchar,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { pgEnum } from "drizzle-orm/pg-core";
 import { Category } from "@/data/enums/db.enums";
 
 // setting enums required by this schema
-export const categoryEnum = pgEnum("category", Object.values(Category) as [string, ...string[]]);
+export const categoryEnum = pgEnum("category", Object.values(Category) as [Category, ...Category[]]);
 
 // setting the schema using converted enums
 export const merchants = pgTable("merchants", {

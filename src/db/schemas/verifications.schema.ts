@@ -6,8 +6,8 @@ import {
   timestamp,
   uuid,
   uniqueIndex,
+  pgEnum,
 } from "drizzle-orm/pg-core";
-import { pgEnum } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { VerificationStatus, RiskLevel } from "@/data/enums/db.enums";
 import { merchants } from "./merchants.schema";

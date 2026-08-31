@@ -1,5 +1,4 @@
-import { decimal, index, pgTable, timestamp, uuid, boolean} from "drizzle-orm/pg-core";
-import { pgEnum } from "drizzle-orm/pg-core";
+import { decimal, index, pgTable, timestamp, uuid, boolean, pgEnum} from "drizzle-orm/pg-core";
 import { PaymentStatus, PaymentMethod } from "@/data/enums/db.enums";
 
 import { merchants } from "./merchants.schema";
