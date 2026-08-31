@@ -6,10 +6,10 @@ import {
 import {
     getMerchantById
 } from "@/app/repositories/merchant.repository";
-import { Merchant } from "@/data/types/Merchant";
+import { type Merchant } from "@/data/types/Merchant";
 import { StatusCodes } from "http-status-codes/build/cjs/status-codes";
 import { ApiError } from "@/utils/errors/ApiError";
-import { Verification, RequestVerificationDto } from "@/data/types/Verification";
+import { type Verification, type RequestVerificationDto } from "@/data/types/Verification";
 import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
 import { inngestClient } from "@/config";
 

@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import { HttpStatusCode } from "@/data/types/statusCodes";
+import { type HttpStatusCode } from "@/data/types/statusCodes";
 
 export class ApiResponse<T> {
   statusCode: HttpStatusCode;

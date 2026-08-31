@@ -1,6 +1,6 @@
 import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
 
-import { PipelineResults } from "@/data/types/pipelineTypes";
+import { type PipelineResults } from "@/data/types/pipelineTypes";
 
 export const combineResults = async (results: PipelineResults) => {
   const trustscore = Math.round(

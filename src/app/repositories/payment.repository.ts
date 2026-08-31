@@ -1,6 +1,6 @@
 import {db} from "@/db";
 import {payments as paymentTable} from "@/db/schemas/payments.schema";
-import {Payment, NewPayment, CreatePaymentDto} from "@/data/types/Payment";
+import {type Payment, type NewPayment, type CreatePaymentDto} from "@/data/types/Payment";
 import { eq, and, desc } from "drizzle-orm/sql/expressions/index";
 
 export const getAllPayments = async (merchantId: string) : Promise<Payment[]> => {

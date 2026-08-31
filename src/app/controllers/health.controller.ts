@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import  asyncHandler  from "express-async-handler";
 import { ApiResponse } from "@/utils/response/ApiResponse";
 import { healthCheckService } from "@/app/services/health.service";

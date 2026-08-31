@@ -3,10 +3,10 @@ import type {
   InferSelectModel,
 } from "drizzle-orm";
 import type { Request } from "express";
-import { payments } from "@/db/schemas/payments.schema";
+import { type payments } from "@/db/schemas/payments.schema";
 import {
-  PaymentStatus,
-  PaymentMethod,
+  type PaymentStatus,
+  type PaymentMethod,
 } from "@/data/enums/db.enums";
 
 export type Payment = InferSelectModel<typeof payments>;

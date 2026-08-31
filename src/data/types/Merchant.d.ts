@@ -1,5 +1,5 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { Category } from "@/data/enums"
+import { type Category } from "@/data/enums"
 
 // database types
 export type Merchant = InferSelectModel<typeof merchants>;

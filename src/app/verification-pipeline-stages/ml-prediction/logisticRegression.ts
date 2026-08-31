@@ -2,9 +2,9 @@ import { PaymentStatus } from "@/data/enums/db.enums";
 import { config } from "@/config/env/env";
 
 import {
-  VerificationResults,
-  MLPredictionData,
-  PipelinePayment,
+  type VerificationResults,
+  type MLPredictionData,
+  type PipelinePayment,
 } from "@/data/types/pipelineTypes";
 
 const HIGH_VALUE_PAYMENT_THRESHOLD = 10_000;

@@ -7,7 +7,7 @@ import { getMerchantById } from "@/app/repositories/merchant.repository";
 import { StatusCodes } from "http-status-codes";
 import { ApiError } from "@/utils/errors/ApiError";
 import {
-  CreatePaymentDto,
+  type CreatePaymentDto,
 } from "@/data/types/Payment";
 
 export const getAll = async (merchantId: string) => {

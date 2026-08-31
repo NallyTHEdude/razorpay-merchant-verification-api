@@ -1,11 +1,11 @@
 import { firecrawl } from "@/config/scraper/client";
 
 import {
-  WebsiteData,
-  WebsiteVerificationResult,
+  type WebsiteData,
+  type WebsiteVerificationResult,
 } from "@/data/types/pipelineTypes";
 
-import { websiteDataSchema, WebsiteAgentData } from "./website.validator";
+import { websiteDataSchema, type WebsiteAgentData } from "./website.validator";
 
 export const fetchWebsiteData = async (
   websiteUrl: string,

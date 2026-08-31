@@ -1,6 +1,6 @@
 import { ApiError } from "@/utils/errors/ApiError";
-import { RequestHandler } from "express";
-import { ValidationChain, validationResult } from "express-validator";
+import { type RequestHandler } from "express";
+import { type ValidationChain, validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 
 export const validate = (validators: ValidationChain[]): RequestHandler => {

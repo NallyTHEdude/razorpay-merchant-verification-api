@@ -1,7 +1,7 @@
 import {
-  CreateMerchantDto,
-  Merchant,
-  UpdateMerchantDto,
+  type CreateMerchantDto,
+  type Merchant,
+  type UpdateMerchantDto,
 } from "@/data/types/Merchant";
 import { ApiError } from "@/utils/errors/ApiError";
 import { StatusCodes } from "http-status-codes";

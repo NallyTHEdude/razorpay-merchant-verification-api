@@ -1,11 +1,11 @@
 import {
-  CreateMerchantRequest,
-  MerchantGstNumberParam,
-  MerchantIdParam,
-  UpdateMerchantRequest,
+  type CreateMerchantRequest,
+  type MerchantGstNumberParam,
+  type MerchantIdParam,
+  type UpdateMerchantRequest,
 } from "@/data/types/Merchant";
 import { ApiResponse } from "@/utils/response/ApiResponse";
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import asyncHandler from "express-async-handler";
 import { StatusCodes } from "http-status-codes";
 import {

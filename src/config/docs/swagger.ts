@@ -1,5 +1,5 @@
 import Router from "express";
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import { config } from "@/config";
 import { componentSchemas } from "./component-schemas.js";

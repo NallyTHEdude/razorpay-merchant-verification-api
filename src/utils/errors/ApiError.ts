@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "@/data/types/statusCodes";
+import { type HttpStatusCode } from "@/data/types/statusCodes";
 
 interface ApiErrorDetail {
   message: string;

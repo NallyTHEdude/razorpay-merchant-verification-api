@@ -1,6 +1,6 @@
 import {
-  PipelineResults,
-  VerificationUpdateData,
+  type PipelineResults,
+  type VerificationUpdateData,
 } from "@/data/types/pipelineTypes";
 import { updateVerificationById } from "@/app/repositories/verification.repository";
 

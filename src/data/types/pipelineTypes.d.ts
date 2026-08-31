@@ -1,7 +1,7 @@
-import { Merchant } from "@/data/types/Merchant";
-import { Verification } from "@/data/types/Verification";
-import { Payment } from "@/data/types/Payment";
-import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
+import { type Merchant } from "@/data/types/Merchant";
+import { type Verification } from "@/data/types/Verification";
+import { type Payment } from "@/data/types/Payment";
+import { type RiskLevel, type VerificationStatus } from "@/data/enums/db.enums";
 
 export type VerificationResults = {
   isPhoneNumberVerified: boolean;

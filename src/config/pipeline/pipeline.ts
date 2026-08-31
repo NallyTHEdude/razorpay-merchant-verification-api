@@ -1,5 +1,5 @@
-import { Merchant } from "@/data/types/Merchant";
-import { PipelineResults } from "@/data/types/pipelineTypes";
+import { type Merchant } from "@/data/types/Merchant";
+import { type PipelineResults } from "@/data/types/pipelineTypes";
 
 import { getByVerificationId } from "@/app/repositories/verification.repository";
 
@@ -12,7 +12,7 @@ import { logRegPrediction } from "@/app/verification-pipeline-stages/ml-predicti
 import { combineResults } from "@/app/verification-pipeline-stages/combine-results/combine-results";
 import { updateVerification } from "@/app/verification-pipeline-stages/update-verification/update-verification";
 import { updateMerchant } from "@/app/repositories/merchant.repository";
-import { PipelinePayment } from "@/data/types/pipelineTypes";
+import { type PipelinePayment } from "@/data/types/pipelineTypes";
 
 // Load existing verification and recent payments
 export const loadVerificationContext = async (

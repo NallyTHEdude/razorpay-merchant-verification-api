@@ -3,7 +3,7 @@ import {
     getById,
     request
 } from "@/app/services/verification.service";
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { ApiResponse } from "@/utils/response/ApiResponse";
 import {StatusCodes} from "http-status-codes";
 import type {

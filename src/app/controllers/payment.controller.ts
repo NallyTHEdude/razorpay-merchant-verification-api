@@ -1,10 +1,10 @@
 import {
-  PaymentMerchantIdParam,
-  PaymentIdParam,
-  CreatePaymentRequest,
+  type PaymentMerchantIdParam,
+  type PaymentIdParam,
+  type CreatePaymentRequest,
 } from "@/data/types/Payment";
 import { ApiResponse } from "@/utils/response/ApiResponse";
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import asyncHandler from "express-async-handler";
 import { StatusCodes } from "http-status-codes";
 import { createMany, getAll, getById } from "../services/payment.service";

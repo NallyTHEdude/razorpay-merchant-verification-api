@@ -12,7 +12,7 @@ import {
   applyMerchantUpdate,
 } from "./pipeline";
 
-import { Merchant } from "@/data/types/Merchant";
+import { type Merchant } from "@/data/types/Merchant";
 import { markVerificationAsServerError } from "@/app/repositories/verification.repository";
 import { VerificationStatus } from "@/data/enums/db.enums";
 

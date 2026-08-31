@@ -1,7 +1,7 @@
 import {
-  CreateMerchantDto,
-  Merchant,
-  UpdateMerchantDto,
+  type CreateMerchantDto,
+  type Merchant,
+  type UpdateMerchantDto,
 } from "@/data/types/Merchant";
 import { db } from "@/db";
 import { merchants as merchantTable } from "@/db/schemas/merchants.schema";
