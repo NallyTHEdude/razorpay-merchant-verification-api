@@ -11,7 +11,7 @@ import {
   runMlPrediction,
   runPhoneVerification,
   runWebsiteVerification,
-} from "./pipeline";
+} from "../../service/pipeline";
 
 import { markVerificationAsServerError } from "@/app/repositories/verification.repository";
 import { VerificationStatus } from "@/data/enums/db.enums";
