@@ -115,7 +115,7 @@ export const verificationPipeline = inngestClient.createFunction(
     );
 
     // Step 7: Combine results
-    const result = await step.run("combine-results", async () => {
+    const result = await step.run("combine-results", () => {
       return combinePipelineResults(pipelineResults);
     });
 

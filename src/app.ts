@@ -2,11 +2,11 @@ import express from "express";
 import { serve } from "inngest/express";
 import { globalErrorHandler } from "@/utils/errors/globalErrorHandler";
 
-import { inngestClient } from "@/config";
+import { inngestClient } from "@/config/pipeline/client";
 import { verificationPipeline } from "./config/pipeline/functions";
 
 //import routes
-import { swaggerRouter } from "@/config";
+import swaggerRouter from "@/config/docs/swagger";
 import healthRoute from "@/app/routes/health.route";
 import merchantRoute from "@/app/routes/merchant.route";
 import verificationRoute from "@/app/routes/verification.route";

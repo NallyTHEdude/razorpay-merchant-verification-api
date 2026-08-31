@@ -3,48 +3,58 @@ import {
   getByVerificationId,
   createVerification,
 } from "@/app/repositories/verification.repository";
-import {
-    getMerchantById
-} from "@/app/repositories/merchant.repository";
+import { getMerchantById } from "@/app/repositories/merchant.repository";
 import { type Merchant } from "@/data/types/Merchant";
 import { StatusCodes } from "http-status-codes/build/cjs/status-codes";
 import { ApiError } from "@/utils/errors/ApiError";
-import { type Verification, type RequestVerificationDto } from "@/data/types/Verification";
+import {
+  type Verification,
+  type RequestVerificationDto,
+} from "@/data/types/Verification";
 import { RiskLevel, VerificationStatus } from "@/data/enums/db.enums";
 import { inngestClient } from "@/config";
+import { type PostgresError } from "@/data/types/Database";
 
 export const getAll = async (merchantId: string): Promise<Verification[]> => {
-    const merchant: Merchant | null = await getMerchantById(merchantId);
-    if (!merchant) {
-        throw new ApiError(
-            StatusCodes.NOT_FOUND,
-            `Merchant with id: ${merchantId} does not exist`,
-        )
-    }
-    const verifications: Verification[] = await getAllVerifications(merchantId);
-    return verifications;
-}
+  const merchant: Merchant | null = await getMerchantById(merchantId);
+  if (!merchant) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      `Merchant with id: ${merchantId} does not exist`,
+    );
+  }
+  const verifications: Verification[] = await getAllVerifications(merchantId);
+  return verifications;
+};
 
-export const getById = async (merchantId: string, verificationId: string): Promise<Verification> => {
-    const merchant: Merchant | null = await getMerchantById(merchantId);
-    if (!merchant) {
-        throw new ApiError(
-            StatusCodes.NOT_FOUND,
-            `Merchant with id: ${merchantId} does not exist`,
-        )
-    }
-    const verification : Verification | null = await getByVerificationId(merchantId, verificationId);
-    if (!verification) {
-        throw new ApiError(
-            StatusCodes.NOT_FOUND,
-            `Verification with id: ${verificationId} does not exist`,
-        )
-    }
-    return verification;
-}
+export const getById = async (
+  merchantId: string,
+  verificationId: string,
+): Promise<Verification> => {
+  const merchant: Merchant | null = await getMerchantById(merchantId);
+  if (!merchant) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      `Merchant with id: ${merchantId} does not exist`,
+    );
+  }
+  const verification: Verification | null = await getByVerificationId(
+    merchantId,
+    verificationId,
+  );
+  if (!verification) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      `Verification with id: ${verificationId} does not exist`,
+    );
+  }
+  return verification;
+};
 
 // create calls the inngest trigger to start pipeline
-export const request = async (requestVerificationDto: RequestVerificationDto): Promise<Verification> => {
+export const request = async (
+  requestVerificationDto: RequestVerificationDto,
+): Promise<Verification> => {
   let merchant: Merchant;
 
   if ("merchant" in requestVerificationDto) {
@@ -90,8 +100,9 @@ export const request = async (requestVerificationDto: RequestVerificationDto): P
     });
 
     return verification;
-  } catch (error: any) {
-    const pgError = error?.cause ?? error;
+  } catch (error: unknown) {
+   const cause = error instanceof Error && error.cause ? error.cause : error;
+   const pgError = _isPostgresError(cause) ? cause : undefined;
 
     if (
       pgError?.code === "23505" &&
@@ -106,3 +117,11 @@ export const request = async (requestVerificationDto: RequestVerificationDto): P
     throw error;
   }
 };
+
+function _isPostgresError(value: unknown): value is PostgresError {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    ("code" in value || "constraint" in value)
+  );
+}
