@@ -8,8 +8,8 @@ An API that automates merchant verification and validity checks, while detecting
 ---
 
 ## Architecture
-![Architecture Diagram](docs/database-design.svg)
-*[View interactive diagram →](https://excalidraw.com/#json=-kqgCNnFE_90Xr0An4N8o,yveAKVHD8zym4FYISnax7Q)*
+![Architecture Diagram](docs/architecture-design.svg.svg)
+*[View interactive diagram →](docs/database-diagram.svg)*
 
 ---
 
