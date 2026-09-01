@@ -5,6 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       fileStream?: Readable;
+      fileOriginalName?: string;
       documentUploadResult?: DocumentUploadResult;
     }
   }

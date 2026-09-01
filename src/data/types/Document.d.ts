@@ -13,6 +13,11 @@ export type UploadMerchantDto = {
   originalFilename: string;
 };
 
+export type UploadGovernmentDto = {
+  fileStream: Readable;
+  originalFilename: string;
+};
+
 export type DocumentUploadResult = {
   publicId: string;
   secureUrl: string;
