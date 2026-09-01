@@ -8,11 +8,12 @@ An API that automates merchant verification and validity checks, while detecting
 ---
 
 ## Architecture
-## Architecture
 
-[Architecture Diagram](docs/architecture-design.svg)
+![Architecture Diagram](docs/architecture-design.svg)
 
-[View database diagram →](docs/database-design.svg)
+## Database Design
+
+![Database Design](docs/database-design.svg)
 
 ---
 
