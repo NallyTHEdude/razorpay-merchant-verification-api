@@ -1,6 +1,6 @@
 import { healthCheckRepository } from "@/app/repositories/health.repository";
 import { config } from "@/config/env";
-import { firecrawl } from "@/config/scraper/client";
+import { firecrawl } from "@/config/firecrawl-scraper/client";
 
 export const healthCheckService = async () => {
   const [database, firecrawlHealth, mlServer, inngest] = await Promise.all([

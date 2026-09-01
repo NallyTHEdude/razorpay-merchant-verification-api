@@ -1,3 +1,3 @@
-export { default as swaggerRouter } from "./docs/swagger";
 export * from "./env";
-export * from "./pipeline/client";
+export * from "./inngest-pipeline/client";
+export { default as swaggerRouter } from "./swagger/swagger";

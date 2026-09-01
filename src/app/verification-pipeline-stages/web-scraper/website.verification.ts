@@ -1,4 +1,4 @@
-import { firecrawl } from "@/config/scraper/client";
+import { firecrawl } from "@/config/firecrawl-scraper/client";
 
 import {
   type WebsiteData,

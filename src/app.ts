@@ -2,15 +2,15 @@ import { globalErrorHandler } from "@/utils/errors/globalErrorHandler";
 import express from "express";
 import { serve } from "inngest/express";
 
-import { inngestClient } from "@/config/pipeline/client";
-import { verificationPipeline } from "./config/pipeline/functions";
+import { inngestClient } from "@/config/inngest-pipeline/client";
+import { verificationPipeline } from "./config/inngest-pipeline/functions";
 
 //import routes
 import healthRoute from "@/app/routes/health.route";
 import merchantRoute from "@/app/routes/merchant.route";
 import paymentRoute from "@/app/routes/payment.route";
 import verificationRoute from "@/app/routes/verification.route";
-import swaggerRouter from "@/config/docs/swagger";
+import swaggerRouter from "@/config/swagger/swagger";
 
 const app = express();
 
