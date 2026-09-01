@@ -26,7 +26,7 @@ export const ragChunks = pgTable(
     chunkIndex: integer("chunk_index").notNull(),
 
     embedding: vector("embedding", {
-      dimensions: 1536,
+      dimensions: 1024,
     }).notNull(),
 
     createdAt: timestamp("created_at", {
