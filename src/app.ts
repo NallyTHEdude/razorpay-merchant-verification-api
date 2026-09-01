@@ -15,7 +15,12 @@ import documentRoute from "@/app/routes/document.route";
 
 const app = express();
 
-app.use(express.json());
+app.use((req, res, next) => {
+  if (req.is("multipart/form-data")) {
+    return next();
+  }
+  express.json()(req, res, next);
+});
 
 // suggested in docs
 app.use(
