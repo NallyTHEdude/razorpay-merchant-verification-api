@@ -16,6 +16,7 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
+  ADMIN_UPLOAD_PASSWORD: z.string(),
 });
 
 export const config = envSchema.parse(process.env);
