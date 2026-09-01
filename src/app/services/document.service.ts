@@ -6,28 +6,42 @@ import { ApiError } from "@/utils/errors/ApiError";
 import { StatusCodes } from "http-status-codes/build/cjs/status-codes";
 
 export const uploadMerchant = async (data: UploadMerchantDto) => {
-    const { fileBuffer, merchantId } = data;
+  const { fileStream, merchantId, originalFilename } = data;
 
-    const merchant = await getMerchantById(merchantId);
-    if(!merchant) {
-        throw new ApiError(
-            StatusCodes.NOT_FOUND, 
-            "Merchant not found"
-        );
-    }
+  if (!merchantId) {
+    throw new ApiError(
+        StatusCodes.BAD_REQUEST, 
+        "Merchant ID is required"
+    );
+  }
 
-    const uploadResult = await uploadDocument(fileBuffer, {
-        folder: CloudinaryFolderName.MERCHANT_DOCUMENTS,
-        subFolder: merchant.id,
-    });
+  if (!fileStream) {
+    throw new ApiError(
+        StatusCodes.BAD_REQUEST, 
+        "Document stream is required"
+    );
+  }
 
-    if(!uploadResult) {
-        throw new ApiError(
-            StatusCodes.INTERNAL_SERVER_ERROR, 
-            "Document upload failed"
-        );
-    }
+  const merchant = await getMerchantById(merchantId);
+  if (!merchant) {
+    throw new ApiError(
+        StatusCodes.NOT_FOUND, 
+        "Merchant not found"
+    );
+  }
 
-    return uploadResult;
-}
+  const uploadResult = await uploadDocument(fileStream, {
+    folder: CloudinaryFolderName.MERCHANT_DOCUMENTS,
+    subFolder: merchant.id,
+    originalFilename,
+  });
 
+  if (!uploadResult) {
+    throw new ApiError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Document upload failed",
+    );
+  }
+
+  return uploadResult;
+};

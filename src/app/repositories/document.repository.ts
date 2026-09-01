@@ -1,27 +1,56 @@
 import cloudinary from "@/config/cloudinary";
-import type { DocumentUploadOptions } from "@/data/types/Document";
+import type {
+  DocumentUploadOptions,
+  DocumentUploadResult,
+} from "@/data/types/Document";
+import type { Readable } from "node:stream";
+import { extname, basename } from "node:path";
+import { randomUUID } from "node:crypto";
 
-export const uploadDocument = (buffer: Buffer, options: DocumentUploadOptions,): Promise<{
-  publicId: string;
-  secureUrl: string;
-  format: string;
-  bytes: number;
-}> => {
+const sanitizeBaseName = (filename: string): string => {
+  const ext = extname(filename);
+  const nameWithoutExt = basename(filename, ext);
+
+  return nameWithoutExt
+    .trim()
+    .replace(/[^a-zA-Z0-9-_ ]/g, "")
+    .replace(/\s+/g, "-")
+    .slice(0, 100);
+};
+
+export const uploadDocument = (
+  fileStream: Readable,
+  options: DocumentUploadOptions,
+): Promise<DocumentUploadResult> => {
   return new Promise((resolve, reject) => {
-    const folderPath: string = `${options.folder}/${options.subFolder}`;
-    const stream = cloudinary.uploader.upload_stream(
+    const folderPath = [options.folder, options.subFolder]
+      .filter(Boolean)
+      .join("/");
+
+    const extension = extname(options.originalFilename) || ".pdf";
+    const sanitizedName =
+      sanitizeBaseName(options.originalFilename) || "document";
+    const publicId = `${sanitizedName}-${randomUUID()}${extension}`;
+
+    const cloudinaryStream = cloudinary.uploader.upload_stream(
       {
         folder: folderPath,
+        public_id: publicId,
         resource_type: "raw",
-        format: "pdf",
+        type: "upload",
+        access_mode: "public",
+        overwrite: false,
+        use_filename: false,
+        unique_filename: false,
       },
       (error, result) => {
         if (error || !result) {
-          reject(
+          const cloudinaryError =
             error instanceof Error
               ? error
-              : new Error("Cloudinary upload failed"),
-          );
+              : new Error(`Cloudinary upload failed: ${JSON.stringify(error)}`);
+
+          reject(cloudinaryError);
           return;
         }
 
@@ -34,6 +63,14 @@ export const uploadDocument = (buffer: Buffer, options: DocumentUploadOptions,):
       },
     );
 
-    stream.end(buffer);
+    fileStream.on("error", (streamError) => {
+      reject(
+        streamError instanceof Error
+          ? streamError
+          : new Error("Document stream error while uploading"),
+      );
+    });
+
+    fileStream.pipe(cloudinaryStream);
   });
 };
