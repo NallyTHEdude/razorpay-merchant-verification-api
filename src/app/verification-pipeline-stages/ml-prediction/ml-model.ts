@@ -11,7 +11,7 @@ import {
 
 const HIGH_VALUE_PAYMENT_THRESHOLD = 10_000;
 
-export const logRegPrediction = async (
+export const mlPrediction = async (
   paymentData: PipelinePayment[],
   verificationResults: VerificationResults,
 ): Promise<MLPredictionData> => {
@@ -47,7 +47,65 @@ export const logRegPrediction = async (
     internationalPaymentRate,
   };
 
-  const response = await fetch(`${config.ML_SERVICE_URL}/score`, {
+  //TODO: change return type and db and uploadVerification such that it matches response,  response is like:
+  /**
+   * {
+    "fraudProbability": 0.00743658697695803,
+    "riskLevel": "LOW",
+    "explanation": [
+        {
+            "feature": "highValuePaymentRate",
+            "value": 0.1,
+            "contribution": -3.4087581634521484,
+            "direction": "decreases_risk"
+        },
+        {
+            "feature": "averagePaymentAmount",
+            "value": 5000.0,
+            "contribution": 2.872476577758789,
+            "direction": "increases_risk"
+        },
+        {
+            "feature": "failedPaymentRate",
+            "value": 0.0,
+            "contribution": -2.2443599700927734,
+            "direction": "decreases_risk"
+        },
+        {
+            "feature": "internationalPaymentRate",
+            "value": 0.1,
+            "contribution": -1.495469570159912,
+            "direction": "decreases_risk"
+        },
+        {
+            "feature": "isWebsiteVerified",
+            "value": 1.0,
+            "contribution": -0.38566136360168457,
+            "direction": "decreases_risk"
+        },
+        {
+            "feature": "isGstNumberVerified",
+            "value": 1.0,
+            "contribution": -0.3620609939098358,
+            "direction": "decreases_risk"
+        },
+        {
+            "feature": "isPhoneNumberVerified",
+            "value": 1.0,
+            "contribution": -0.3221103250980377,
+            "direction": "decreases_risk"
+        },
+        {
+            "feature": "paymentCount",
+            "value": 35.0,
+            "contribution": -0.21826213598251343,
+            "direction": "decreases_risk"
+        }
+    ]
+}
+   */
+
+  const response = await fetch(`${config.ML_SERVICE_URL}/predict`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

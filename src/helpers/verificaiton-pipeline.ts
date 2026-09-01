@@ -8,7 +8,7 @@ import { getHundredLatestPaymentsByMerchantId } from "@/app/repositories/payment
 import { verifyPhoneNumber } from "@/app/verification-pipeline-stages/phone-number/phoneNumber.verification";
 import { gstNumberVerification } from "@/app/verification-pipeline-stages/gst-number/gstNumber.verification";
 import { fetchWebsiteData } from "@/app/verification-pipeline-stages/web-scraper/website.verification";
-import { logRegPrediction } from "@/app/verification-pipeline-stages/ml-prediction/logisticRegression";
+import { mlPrediction } from "@/app/verification-pipeline-stages/ml-prediction/ml-model";
 import { combineResults } from "@/app/verification-pipeline-stages/combine-results/combine-results";
 import { updateVerification } from "@/app/verification-pipeline-stages/update-verification/update-verification";
 import { updateMerchant } from "@/app/repositories/merchant.repository";
@@ -75,7 +75,7 @@ export const runMlPrediction = async (
 ) => {
   console.log(`Running ML prediction for merchant ${merchant.id}`);
 
-  return logRegPrediction(recentPayments, {
+  return mlPrediction(recentPayments, {
     isGstNumberVerified,
     isPhoneNumberVerified,
     isWebsiteVerified,
