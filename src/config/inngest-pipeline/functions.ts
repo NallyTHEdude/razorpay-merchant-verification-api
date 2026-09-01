@@ -1,6 +1,12 @@
 import { inngestClient } from "./client";
 import { verificationRequested } from "./eventSchemas";
 
+import { documentUploaded } from "./eventSchemas";
+import { extractTextFromPdf } from "@/app/embedding-pipeline-stages/document";
+import { chunkDocument } from "@/app/embedding-pipeline-stages/chunk";
+import { generateEmbeddings } from "@/app/embedding-pipeline-stages/embedding";
+import { createRagDocumentWithChunks } from "@/app/repositories/rag.repository";
+
 import {
   applyMerchantUpdate,
   buildPipelineResults,
@@ -11,7 +17,7 @@ import {
   runMlPrediction,
   runPhoneVerification,
   runWebsiteVerification,
-} from "../../helpers/pipeline";
+} from "../../helpers/verificaiton-pipeline";
 
 import { markVerificationAsServerError } from "@/app/repositories/verification.repository";
 import { VerificationStatus } from "@/data/enums/db.enums";
@@ -157,6 +163,61 @@ export const verificationPipeline = inngestClient.createFunction(
       updatedVerificationData,
       pipelineResults,
       updatedMerchant,
+    };
+  },
+);
+
+export const documentIngestionPipeline = inngestClient.createFunction(
+  {
+    id: "ingest-document",
+    retries: 2,
+    triggers: [documentUploaded],
+  },
+  async ({ event, step }) => {
+    const { secureUrl, source, documentType, metadata } = event.data;
+
+    // step1: Extract text from document
+    const text = await step.run("extract-document-text", async () => {
+      const text = await extractTextFromPdf(secureUrl);
+      if (!text) {
+        throw new Error("No text could be extracted from document");
+      }
+      return text;
+    });
+
+    // step2: Chunk document
+    const chunks = await step.run("chunk-document", async () => {
+      const chunks = await chunkDocument(text);
+      if (chunks.length === 0) {
+        throw new Error("Document produced no chunks");
+      }
+      return chunks;
+    });
+
+    // step3: Generate embeddings from chunks
+    const embeddings = await step.run("generate-document-embeddings", async () => {
+        return generateEmbeddings(chunks);
+      },
+    );
+
+    // step4: Persist document and chunks to database
+    const document = await step.run("persist-rag-document", async () => {
+      return createRagDocumentWithChunks(
+        {
+          source,
+          documentType,
+          metadata,
+        },
+        {
+          chunks,
+          embeddings,
+        },
+      );
+    });
+
+    return {
+      documentId: document.id,
+      chunkCount: chunks.length,
     };
   },
 );
