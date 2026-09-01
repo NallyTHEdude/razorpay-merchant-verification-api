@@ -8,6 +8,7 @@ const splitter = new RecursiveCharacterTextSplitter({
 
 const cleanDocumentText = (text: string): string => {
   return text
+    .replace(/\0/g, "")
     .replace(/--\s*\d+\s+of\s+\d+\s*--/g, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
