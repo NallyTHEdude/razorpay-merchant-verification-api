@@ -11,6 +11,7 @@ import merchantRoute from "@/app/routes/merchant.route";
 import paymentRoute from "@/app/routes/payment.route";
 import verificationRoute from "@/app/routes/verification.route";
 import swaggerRouter from "@/config/swagger/swagger";
+import documentRoute from "@/app/routes/document.route";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/health", healthRoute);
 app.use("/api/merchant", merchantRoute);
 app.use("/api/verification", verificationRoute);
 app.use("/api/payment", paymentRoute);
+app.use("/api/document", documentRoute);
 
 app.use(globalErrorHandler);
 
