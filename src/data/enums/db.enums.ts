@@ -51,3 +51,8 @@ export enum PaymentMethod {
   UPI = "UPI",
   NET_BANKING = "NET_BANKING",
 }
+
+export enum DocumentType {
+  MERCHANT_DOCUMENT = "MERCHANT_DOCUMENT",
+  GOVT_DOCUMENT = "GOVT_DOCUMENT",
+}
