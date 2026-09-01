@@ -17,6 +17,7 @@ export const documentUploaded = eventType("document/uploaded", {
     publicId: z.string(),
     source: z.string(),
     documentType: z.nativeEnum(DocumentType),
+    merchantId: z.string().optional(),
     metadata: z.record(z.string(), z.unknown()).optional(),
   }),
 });

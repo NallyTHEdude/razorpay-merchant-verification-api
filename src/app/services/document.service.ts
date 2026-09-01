@@ -7,6 +7,9 @@ import {
 } from "@/data/types/Document";
 import { ApiError } from "@/utils/errors/ApiError";
 import { StatusCodes } from "http-status-codes/build/cjs/status-codes";
+import { inngestClient } from "@/config/inngest-pipeline/client";
+import { documentUploaded } from "@/config/inngest-pipeline/eventSchemas";
+import { DocumentType } from "@/data/enums/db.enums";
 
 export const uploadMerchant = async (data: UploadMerchantDto) => {
   const { fileStream, merchantId, originalFilename } = data;
@@ -32,7 +35,19 @@ export const uploadMerchant = async (data: UploadMerchantDto) => {
       "Document upload failed",
     );
   }
-
+  await inngestClient.send(
+    documentUploaded.create({
+      secureUrl: uploadResult.secureUrl,
+      publicId: uploadResult.publicId,
+      source: "government-provided",
+      documentType: DocumentType.MERCHANT_DOCUMENT,
+      merchantId: merchant.id,
+      metadata: {
+        originalFilename,
+        bytes: uploadResult.bytes,
+      },
+    }),
+  );
   return uploadResult;
 };
 
@@ -51,6 +66,21 @@ export const uploadGovernment = async (data: UploadGovernmentDto) => {
       "Document upload failed",
     );
   }
+
+  await inngestClient.send(
+    documentUploaded.create(
+      {
+        secureUrl: uploadResult.secureUrl,
+        publicId: uploadResult.publicId,
+        source: "government-provided",
+        documentType: DocumentType.GOVT_DOCUMENT,
+        metadata: {
+          originalFilename,
+          bytes: uploadResult.bytes,
+        },
+      }
+    )
+  );
 
   return uploadResult;
 };
