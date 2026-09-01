@@ -8,8 +8,11 @@ An API that automates merchant verification and validity checks, while detecting
 ---
 
 ## Architecture
-![Architecture Diagram](docs/architecture-design.svg.svg)
-*[View interactive diagram →](docs/database-diagram.svg)*
+## Architecture
+
+[Architecture Diagram](docs/architecture-design.svg)
+
+[View database diagram →](docs/database-design.svg)
 
 ---
 
@@ -21,7 +24,7 @@ An API that automates merchant verification and validity checks, while detecting
 4. **Swagger** — OpenAPI-based API documentation.
 5. **Inngest** — Event-based asynchronous orchestration of the merchant verification pipeline.
 6. **Firecrawl** - Website analysis of merchant.
-
+7. **Cloudinary** - Document storage in cloud
 ---
 
 ## Development Setup
