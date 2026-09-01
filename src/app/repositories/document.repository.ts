@@ -27,16 +27,15 @@ export const uploadDocument = (
       .filter(Boolean)
       .join("/");
 
-    const extension = extname(options.originalFilename) || ".pdf";
     const sanitizedName =
       sanitizeBaseName(options.originalFilename) || "document";
-    const publicId = `${sanitizedName}-${randomUUID()}${extension}`;
+    const publicId = `${sanitizedName}-${randomUUID()}`;
 
     const cloudinaryStream = cloudinary.uploader.upload_stream(
       {
         folder: folderPath,
         public_id: publicId,
-        resource_type: "raw",
+        resource_type: "image",
         type: "upload",
         access_mode: "public",
         overwrite: false,
